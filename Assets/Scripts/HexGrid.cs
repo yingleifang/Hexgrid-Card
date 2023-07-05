@@ -27,6 +27,8 @@ public class HexGrid : MonoBehaviour
 	[SerializeField]
 	int seed;
 
+	Transform[] columns;
+
 	/// <summary>
 	/// Amount of cells in the X dimension.
 	/// </summary>
@@ -44,13 +46,6 @@ public class HexGrid : MonoBehaviour
 	/// </summary>
 	public bool HasPath => currentPathExists;
 
-	/// <summary>
-	/// Whether east-west wrapping is enabled.
-	/// </summary>
-	public bool Wrapping
-	{ get; private set; }
-
-	Transform[] columns;
 	HexGridChunk[] chunks;
 	HexCell[] cells;
 
@@ -62,8 +57,6 @@ public class HexGrid : MonoBehaviour
 
 	HexCell currentPathFrom, currentPathTo;
 	bool currentPathExists;
-
-	int currentCenterColumnIndex = -1;
 
 	List<HexUnit> units = new List<HexUnit>();
 
@@ -78,7 +71,7 @@ public class HexGrid : MonoBehaviour
 		HexUnit.unitPrefab = unitPrefab;
 		cellShaderData = gameObject.AddComponent<HexCellShaderData>();
 		cellShaderData.Grid = this;
-		CreateMap(CellCountX, CellCountZ, Wrapping);
+		CreateMap(CellCountX, CellCountZ);
 	}
 
 	/// <summary>
@@ -110,8 +103,10 @@ public class HexGrid : MonoBehaviour
 	/// </summary>
 	/// <param name="child"><see cref="Transform"/> of the child game object.</param>
 	/// <param name="columnIndex">Index of the parent column.</param>
-	public void MakeChildOfColumn (Transform child, int columnIndex) =>
+	public void MakeChildOfColumn(Transform child, int columnIndex)
+    {
 		child.SetParent(columns[columnIndex], false);
+	}
 
 	/// <summary>
 	/// Create a new map.
@@ -121,7 +116,7 @@ public class HexGrid : MonoBehaviour
 	/// <param name="wrapping">Whether the map wraps east-west.</param>
 	/// <returns>Whether the map was successfully created. It fails if the X or Z size
 	/// is not a multiple of the respective chunk size.</returns>
-	public bool CreateMap (int x, int z, bool wrapping)
+	public bool CreateMap (int x, int z)
 	{
 		if (
 			x <= 0 || x % HexMetrics.chunkSizeX != 0 ||
@@ -144,9 +139,6 @@ public class HexGrid : MonoBehaviour
 
 		CellCountX = x;
 		CellCountZ = z;
-		this.Wrapping = wrapping;
-		currentCenterColumnIndex = -1;
-		HexMetrics.wrapSize = wrapping ? CellCountX : 0;
 		chunkCountX = CellCountX / HexMetrics.chunkSizeX;
 		chunkCountZ = CellCountZ / HexMetrics.chunkSizeZ;
 		cellShaderData.Initialize(CellCountX, CellCountZ);
@@ -155,7 +147,7 @@ public class HexGrid : MonoBehaviour
 		return true;
 	}
 
-	void CreateChunks ()
+	void CreateChunks()
 	{
 		columns = new Transform[chunkCountX];
 		for (int x = 0; x < chunkCountX; x++)
@@ -163,7 +155,6 @@ public class HexGrid : MonoBehaviour
 			columns[x] = new GameObject("Column").transform;
 			columns[x].SetParent(transform, false);
 		}
-
 		chunks = new HexGridChunk[chunkCountX * chunkCountZ];
 		for (int z = 0, i = 0; z < chunkCountZ; z++)
 		{
@@ -204,7 +195,6 @@ public class HexGrid : MonoBehaviour
 			HexMetrics.noiseSource = noiseSource;
 			HexMetrics.InitializeHashGrid(seed);
 			HexUnit.unitPrefab = unitPrefab;
-			HexMetrics.wrapSize = Wrapping ? CellCountX : 0;
 			ResetVisibility();
 		}
 	}
@@ -314,15 +304,7 @@ public class HexGrid : MonoBehaviour
 		cell.ColumnIndex = x / HexMetrics.chunkSizeX;
 		cell.ShaderData = cellShaderData;
 
-		if (Wrapping)
-		{
-			cell.Explorable = z > 0 && z < CellCountZ - 1;
-		}
-		else
-		{
-			cell.Explorable =
-				x > 0 && z > 0 && x < CellCountX - 1 && z < CellCountZ - 1;
-		}
+		cell.Explorable = x > 0 && z > 0 && x < CellCountX - 1 && z < CellCountZ - 1;
 
 		Text label = Instantiate<Text>(cellLabelPrefab);
 		label.rectTransform.anchoredPosition =
@@ -353,7 +335,6 @@ public class HexGrid : MonoBehaviour
 	{
 		writer.Write(CellCountX);
 		writer.Write(CellCountZ);
-		writer.Write(Wrapping);
 
 		for (int i = 0; i < cells.Length; i++)
 		{
@@ -382,10 +363,9 @@ public class HexGrid : MonoBehaviour
 			x = reader.ReadInt32();
 			z = reader.ReadInt32();
 		}
-		bool wrapping = header >= 5 ? reader.ReadBoolean() : false;
-		if (x != CellCountX || z != CellCountZ || this.Wrapping != wrapping)
+		if (x != CellCountX || z != CellCountZ)
 		{
-			if (!CreateMap(x, z, wrapping))
+			if (!CreateMap(x, z))
 			{
 				return;
 			}
@@ -674,43 +654,4 @@ public class HexGrid : MonoBehaviour
 		return visibleCells;
 	}
 
-	/// <summary>
-	/// Center the map given an X position, to facilitate east-west wrapping.
-	/// </summary>
-	/// <param name="xPosition">X position.</param>
-	public void CenterMap (float xPosition)
-	{
-		int centerColumnIndex = (int)
-			(xPosition / (HexMetrics.innerDiameter * HexMetrics.chunkSizeX));
-		
-		if (centerColumnIndex == currentCenterColumnIndex)
-		{
-			return;
-		}
-		currentCenterColumnIndex = centerColumnIndex;
-
-		int minColumnIndex = centerColumnIndex - chunkCountX / 2;
-		int maxColumnIndex = centerColumnIndex + chunkCountX / 2;
-
-		Vector3 position;
-		position.y = position.z = 0f;
-		for (int i = 0; i < columns.Length; i++)
-		{
-			if (i < minColumnIndex)
-			{
-				position.x = chunkCountX *
-					(HexMetrics.innerDiameter * HexMetrics.chunkSizeX);
-			}
-			else if (i > maxColumnIndex)
-			{
-				position.x = chunkCountX *
-					-(HexMetrics.innerDiameter * HexMetrics.chunkSizeX);
-			}
-			else
-			{
-				position.x = 0f;
-			}
-			columns[i].localPosition = position;
-		}
-	}
 }
