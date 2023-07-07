@@ -56,20 +56,9 @@ public class HexCell : MonoBehaviour
 			{
 				return;
 			}
-			int originalViewElevation = ViewElevation;
 			elevation = value;
-			ShaderData.ViewElevationChanged(this);
 			RefreshPosition();
 			ValidateRivers();
-
-			for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
-			{
-				if (flags.HasRoad(d) && GetElevationDifference(d) > 1)
-				{
-					RemoveRoad(d);
-				}
-			}
-
 			Refresh();
 		}
 	}
@@ -86,9 +75,7 @@ public class HexCell : MonoBehaviour
 			{
 				return;
 			}
-			int originalViewElevation = ViewElevation;
 			waterLevel = value;
-			ShaderData.ViewElevationChanged(this);
 			ValidateRivers();
 			Refresh();
 		}
@@ -269,17 +256,12 @@ public class HexCell : MonoBehaviour
 	/// <summary>
 	/// Whether the cell counts as visible.
 	/// </summary>
-	public bool IsVisible => visibility > 0 && Explorable;
+	public bool IsVisible => visibility > 0;
 
 	/// <summary>
 	/// Whether the cell counts as explored.
 	/// </summary>
-	public bool IsExplored
-	{
-		get => flags.HasAll(HexFlags.Explored | HexFlags.Explorable);
-		private set => flags = value ?
-			flags.With(HexFlags.Explored) : flags.Without(HexFlags.Explored);
-	}
+	public bool IsExplored{get;private set;}
 
 	/// <summary>
 	/// Whether the cell is explorable. If not it never counts as explored or visible.

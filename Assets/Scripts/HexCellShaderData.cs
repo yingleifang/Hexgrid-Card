@@ -1,26 +1,16 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
 /// Component that manages cell data used by shaders.
 /// </summary>
 public class HexCellShaderData : MonoBehaviour {
 
-	const float transitionSpeed = 255f;
-
 	Texture2D cellTexture;
 
 	Color32[] cellTextureData;
 
 	bool[] visibilityTransitions;
-
-	List<HexCell> transitioningCells = new List<HexCell>();
-
-	bool needsVisibilityReset;
-
 	public HexGrid Grid { get; set; }
-
-	public bool ImmediateMode { get; set; }
 
 	/// <summary>
 	/// Initialze the map data.
@@ -54,8 +44,6 @@ public class HexCellShaderData : MonoBehaviour {
 				visibilityTransitions[i] = false;
 			}
 		}
-
-		transitioningCells.Clear();
 		enabled = true;
 	}
 
@@ -77,14 +65,8 @@ public class HexCellShaderData : MonoBehaviour {
 	/// <param name="cell">Cell with changed visibility.</param>
 	public void RefreshVisibility (HexCell cell) {
 		int index = cell.Index;
-		if (ImmediateMode) {
-			cellTextureData[index].r = cell.IsVisible ? (byte)255 : (byte)0;
-			cellTextureData[index].g = cell.IsExplored ? (byte)255 : (byte)0;
-		}
-		else if (!visibilityTransitions[index]) {
-			visibilityTransitions[index] = true;
-			transitioningCells.Add(cell);
-		}
+		cellTextureData[index].r = cell.IsVisible ? (byte)255 : (byte)0;
+		cellTextureData[index].g = cell.IsExplored ? (byte)255 : (byte)0;
 		enabled = true;
 	}
 
@@ -99,64 +81,15 @@ public class HexCellShaderData : MonoBehaviour {
 		enabled = true;
 	}
 
-	/// <summary>
-	/// Indicate that view elevation data has changed, requiring a visibility reset.
-	/// Supports water surfaces up to 30 units high.
-	/// </summary>
-	/// <param name="cell">Changed cell.</param>
-	public void ViewElevationChanged (HexCell cell) {
-		cellTextureData[cell.Index].b = cell.IsUnderwater ?
-			(byte)(cell.WaterSurfaceY * (255f / 30f)) : (byte)0;
-		needsVisibilityReset = true;
-		enabled = true;
-	}
-
 	void LateUpdate () {
-		if (needsVisibilityReset) {
-			needsVisibilityReset = false;
-			Grid.ResetVisibility();
-		}
-
-		int delta = (int)(Time.deltaTime * transitionSpeed);
-		if (delta == 0) {
-			delta = 1;
-		}
-		for (int i = 0; i < transitioningCells.Count; i++) {
-			if (!UpdateCellData(transitioningCells[i], delta)) {
-				transitioningCells[i--] =
-					transitioningCells[transitioningCells.Count - 1];
-				transitioningCells.RemoveAt(transitioningCells.Count - 1);
-			}
-		}
-
 		cellTexture.SetPixels32(cellTextureData);
 		cellTexture.Apply();
-		enabled = transitioningCells.Count > 0;
 	}
 
 	bool UpdateCellData (HexCell cell, int delta) {
 		int index = cell.Index;
 		Color32 data = cellTextureData[index];
 		bool stillUpdating = false;
-
-		if (cell.IsExplored && data.g < 255) {
-			stillUpdating = true;
-			int t = data.g + delta;
-			data.g = t >= 255 ? (byte)255 : (byte)t;
-		}
-
-		if (cell.IsVisible) {
-			if (data.r < 255) {
-				stillUpdating = true;
-				int t = data.r + delta;
-				data.r = t >= 255 ? (byte)255 : (byte)t;
-			}
-		}
-		else if (data.r > 0) {
-			stillUpdating = true;
-			int t = data.r - delta;
-			data.r = t < 0 ? (byte)0 : (byte)t;
-		}
 
 		if (!stillUpdating) {
 			visibilityTransitions[index] = false;
