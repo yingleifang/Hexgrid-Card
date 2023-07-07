@@ -60,17 +60,6 @@ public class HexCellShaderData : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Refresh visibility of a cell.
-	/// </summary>
-	/// <param name="cell">Cell with changed visibility.</param>
-	public void RefreshVisibility (HexCell cell) {
-		int index = cell.Index;
-		cellTextureData[index].r = cell.IsVisible ? (byte)255 : (byte)0;
-		cellTextureData[index].g = cell.IsExplored ? (byte)255 : (byte)0;
-		enabled = true;
-	}
-
-	/// <summary>
 	/// Set arbitrary map data of a cell, overriding water data.
 	/// </summary>
 	/// <param name="cell">Cell to apply data for.</param>

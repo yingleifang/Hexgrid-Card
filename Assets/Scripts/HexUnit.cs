@@ -63,8 +63,7 @@ public class HexUnit : MonoBehaviour {
 	/// </summary>
 	/// <param name="cell">Cell to check.</param>
 	/// <returns>Whether the unit could occupy the cell.</returns>
-	public bool IsValidDestination (HexCell cell) =>
-		cell.IsExplored && !cell.IsUnderwater && !cell.Unit;
+	public bool IsValidDestination (HexCell cell) => !cell.IsUnderwater && !cell.Unit;
 
 	/// <summary>
 	/// Travel along a path.

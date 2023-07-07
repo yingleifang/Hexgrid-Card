@@ -259,11 +259,6 @@ public class HexCell : MonoBehaviour
 	public bool IsVisible => visibility > 0;
 
 	/// <summary>
-	/// Whether the cell counts as explored.
-	/// </summary>
-	public bool IsExplored{get;private set;}
-
-	/// <summary>
 	/// Whether the cell is explorable. If not it never counts as explored or visible.
 	/// </summary>
 	public bool Explorable
@@ -340,43 +335,6 @@ public class HexCell : MonoBehaviour
 	int distance;
 
 	int visibility;
-
-	/// <summary>
-	/// Increment visibility level.
-	/// </summary>
-	public void IncreaseVisibility ()
-	{
-		visibility += 1;
-		if (visibility == 1)
-		{
-			IsExplored = true;
-			ShaderData.RefreshVisibility(this);
-		}
-	}
-
-	/// <summary>
-	/// Decrement visiblility level.
-	/// </summary>
-	public void DecreaseVisibility ()
-	{
-		visibility -= 1;
-		if (visibility == 0)
-		{
-			ShaderData.RefreshVisibility(this);
-		}
-	}
-
-	/// <summary>
-	/// Reset visibility level to zero.
-	/// </summary>
-	public void ResetVisibility ()
-	{
-		if (visibility > 0)
-		{
-			visibility = 0;
-			ShaderData.RefreshVisibility(this);
-		}
-	}
 
 	/// <summary>
 	/// Get one of the neighbor cells. Only valid if that neighbor exists.
@@ -658,7 +616,6 @@ public class HexCell : MonoBehaviour
 		}
 
 		writer.Write((byte)(flags & HexFlags.Roads));
-		writer.Write(IsExplored);
 	}
 
 	/// <summary>
@@ -701,9 +658,7 @@ public class HexCell : MonoBehaviour
 
 		flags |= (HexFlags)reader.ReadByte();
 
-		IsExplored = header >= 3 ? reader.ReadBoolean() : false;
 		ShaderData.RefreshTerrain(this);
-		ShaderData.RefreshVisibility(this);
 	}
 
 	/// <summary>
