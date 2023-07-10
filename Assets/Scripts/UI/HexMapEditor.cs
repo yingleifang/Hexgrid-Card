@@ -117,7 +117,7 @@ public class HexMapEditor : MonoBehaviour
 				}
 				else
 				{
-					CreateUnit();
+					CreateBase();
 				}
 				return;
 			}
@@ -132,13 +132,13 @@ public class HexMapEditor : MonoBehaviour
 	HexCell GetCellUnderCursor () =>
 		hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
 
-	void CreateUnit ()
+	void CreateBase ()
 	{
 		HexCell cell = GetCellUnderCursor();
-		if (cell && !cell.Unit)
+		if (cell && !cell.Feature)
 		{
-			hexGrid.AddUnit(
-				Instantiate(HexUnit.unitPrefab), cell, Random.Range(0f, 360f)
+			hexGrid.AddFeature(
+				Instantiate(Base.basePrefab), cell, Random.Range(0f, 360f)
 			);
 		}
 	}
@@ -146,9 +146,9 @@ public class HexMapEditor : MonoBehaviour
 	void DestroyUnit ()
 	{
 		HexCell cell = GetCellUnderCursor();
-		if (cell && cell.Unit)
+		if (cell && cell.Feature)
 		{
-			hexGrid.RemoveUnit(cell.Unit);
+			hexGrid.RemoveUnit((HexUnit)cell.Feature);
 		}
 	}
 

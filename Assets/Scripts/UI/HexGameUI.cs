@@ -43,7 +43,7 @@ public class HexGameUI : MonoBehaviour {
 		grid.ClearPath();
 		UpdateCurrentCell();
 		if (currentCell) {
-			selectedUnit = currentCell.Unit;
+			selectedUnit = (HexUnit)currentCell.Feature;
 		}
 	}
 

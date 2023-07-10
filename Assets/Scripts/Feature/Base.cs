@@ -1,18 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.IO;
 
 public class Base : Feature
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public static Base basePrefab;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+	public static void Load(BinaryReader reader, HexGrid grid)
+	{
+		HexCoordinates coordinates = HexCoordinates.Load(reader);
+		float orientation = reader.ReadSingle();
+		grid.AddFeature(
+			Instantiate(basePrefab), grid.GetCell(coordinates), orientation
+		);
+	}
 }

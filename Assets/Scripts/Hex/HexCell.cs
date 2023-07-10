@@ -280,7 +280,7 @@ public class HexCell : MonoBehaviour
 	/// <summary>
 	/// Unit currently occupying the cell, if any.
 	/// </summary>
-	public HexUnit Unit
+	public Feature Feature
 	{ get; set; }
 
 	/// <summary>
@@ -566,9 +566,9 @@ public class HexCell : MonoBehaviour
 					neighbor.Chunk.Refresh();
 				}
 			}
-			if (Unit)
+			if (Feature)
 			{
-				Unit.ValidateLocation();
+				Feature.ValidateLocation();
 			}
 		}
 	}
@@ -576,9 +576,9 @@ public class HexCell : MonoBehaviour
 	void RefreshSelfOnly ()
 	{
 		Chunk.Refresh();
-		if (Unit)
+		if (Feature)
 		{
-			Unit.ValidateLocation();
+			Feature.ValidateLocation();
 		}
 	}
 

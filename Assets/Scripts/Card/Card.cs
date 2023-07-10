@@ -23,6 +23,6 @@ public class Card : ScriptableObject
     public Sprite portrait;
     public virtual void UseEffect()
     {
-
+        Debug.Log("Card Used");
     }
 }

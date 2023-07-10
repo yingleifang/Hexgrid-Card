@@ -56,6 +56,7 @@ MonoBehaviour:
   backGroundImage: {fileID: 5079903400728364517}
   Occupied: 0
   Description: {fileID: 854779781894355727}
+  card: {fileID: 0}
 --- !u!1001 &3508568349113002909
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -200,6 +201,30 @@ PrefabInstance:
     - target: {fileID: 7127509035409986330, guid: b351dcda9a7f5b34daf9988a775b547b, type: 3}
       propertyPath: m_Name
       value: Description
+      objectReference: {fileID: 0}
+    - target: {fileID: 7398973279875692710, guid: b351dcda9a7f5b34daf9988a775b547b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7398973279875692710, guid: b351dcda9a7f5b34daf9988a775b547b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7398973279875692710, guid: b351dcda9a7f5b34daf9988a775b547b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 4890264411866374197}
+    - target: {fileID: 7398973279875692710, guid: b351dcda9a7f5b34daf9988a775b547b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: UseCard
+      objectReference: {fileID: 0}
+    - target: {fileID: 7398973279875692710, guid: b351dcda9a7f5b34daf9988a775b547b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: CardDisplay, Assembly-CSharp
+      objectReference: {fileID: 0}
+    - target: {fileID: 7398973279875692710, guid: b351dcda9a7f5b34daf9988a775b547b, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

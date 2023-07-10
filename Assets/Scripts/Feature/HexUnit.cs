@@ -14,64 +14,30 @@ public class HexUnit : Feature
 
 	public static HexUnit unitPrefab;
 
-	/// <summary>
-	/// Cell that the unit occupies.
-	/// </summary>
-	public HexCell Location {
-		get => location;
-		set {
-			if (location) {
-				location.Unit = null;
-			}
-			location = value;
-			value.Unit = this;
-			transform.localPosition = value.Position;
-			Grid.MakeChildOfColumn(transform, value.ColumnIndex);
-		}
-	}
-
-	HexCell location, currentTravelLocation;
-
-	/// <summary>
-	/// Orientation that the unit is facing.
-	/// </summary>
-	public float Orientation {
-		get => orientation;
-		set {
-			orientation = value;
-			transform.localRotation = Quaternion.Euler(0f, value, 0f);
-		}
-	}
+	HexCell currentTravelLocation;
 
 	/// <summary>
 	/// Speed of the unit, in cells per turn.
 	/// </summary>
 	public int Speed => 24;
 
-	float orientation;
-
 	List<HexCell> pathToTravel;
-
-	/// <summary>
-	/// Validate the position of the unit.
-	/// </summary>
-	public void ValidateLocation () => transform.localPosition = location.Position;
 
 	/// <summary>
 	/// Checl whether a cell is a valid destination for the unit.
 	/// </summary>
 	/// <param name="cell">Cell to check.</param>
 	/// <returns>Whether the unit could occupy the cell.</returns>
-	public bool IsValidDestination (HexCell cell) => !cell.IsUnderwater && !cell.Unit;
+	public bool IsValidDestination (HexCell cell) => !cell.IsUnderwater && !cell.Feature;
 
 	/// <summary>
 	/// Travel along a path.
 	/// </summary>
 	/// <param name="path">List of cells that describe a valid path.</param>
 	public void Travel (List<HexCell> path) {
-		location.Unit = null;
+		location.Feature = null;
 		location = path[path.Count - 1];
-		location.Unit = this;
+		location.Feature = this;
 		pathToTravel = path;
 		StopAllCoroutines();
 		StartCoroutine(TravelPath());
@@ -188,30 +154,8 @@ public class HexUnit : Feature
 	/// Terminate the unit.
 	/// </summary>
 	public void Die () {
-		location.Unit = null;
+		location.Feature = null;
 		Destroy(gameObject);
-	}
-
-	/// <summary>
-	/// Save the unit data.
-	/// </summary>
-	/// <param name="writer"><see cref="BinaryWriter"/> to use.</param>
-	public void Save (BinaryWriter writer) {
-		location.Coordinates.Save(writer);
-		writer.Write(orientation);
-	}
-
-	/// <summary>
-	/// Load the unit data.
-	/// </summary>
-	/// <param name="reader"><see cref="BinaryReader"/> to use.</param>
-	/// <param name="grid"><see cref="HexGrid"/> to add the unit to.</param>
-	public static void Load (BinaryReader reader, HexGrid grid) {
-		HexCoordinates coordinates = HexCoordinates.Load(reader);
-		float orientation = reader.ReadSingle();
-		grid.AddUnit(
-			Instantiate(unitPrefab), grid.GetCell(coordinates), orientation
-		);
 	}
 
 	void OnEnable () {
@@ -223,27 +167,41 @@ public class HexUnit : Feature
 		}
 	}
 
-//	void OnDrawGizmos () {
-//		if (pathToTravel == null || pathToTravel.Count == 0) {
-//			return;
-//		}
-//
-//		Vector3 a, b, c = pathToTravel[0].Position;
-//
-//		for (int i = 1; i < pathToTravel.Count; i++) {
-//			a = c;
-//			b = pathToTravel[i - 1].Position;
-//			c = (b + pathToTravel[i].Position) * 0.5f;
-//			for (float t = 0f; t < 1f; t += 0.1f) {
-//				Gizmos.DrawSphere(Bezier.GetPoint(a, b, c, t), 2f);
-//			}
-//		}
-//
-//		a = c;
-//		b = pathToTravel[pathToTravel.Count - 1].Position;
-//		c = b;
-//		for (float t = 0f; t < 1f; t += 0.1f) {
-//			Gizmos.DrawSphere(Bezier.GetPoint(a, b, c, t), 2f);
-//		}
-//	}
+	/// <summary>
+	/// Load the unit data.
+	/// </summary>
+	/// <param name="reader"><see cref="BinaryReader"/> to use.</param>
+	/// <param name="grid"><see cref="HexGrid"/> to add the unit to.</param>
+	public static void Load(BinaryReader reader, HexGrid grid)
+	{
+		HexCoordinates coordinates = HexCoordinates.Load(reader);
+		float orientation = reader.ReadSingle();
+		grid.AddFeature(
+			Instantiate(unitPrefab), grid.GetCell(coordinates), orientation
+		);
+	}
+
+	//	void OnDrawGizmos () {
+	//		if (pathToTravel == null || pathToTravel.Count == 0) {
+	//			return;
+	//		}
+	//
+	//		Vector3 a, b, c = pathToTravel[0].Position;
+	//
+	//		for (int i = 1; i < pathToTravel.Count; i++) {
+	//			a = c;
+	//			b = pathToTravel[i - 1].Position;
+	//			c = (b + pathToTravel[i].Position) * 0.5f;
+	//			for (float t = 0f; t < 1f; t += 0.1f) {
+	//				Gizmos.DrawSphere(Bezier.GetPoint(a, b, c, t), 2f);
+	//			}
+	//		}
+	//
+	//		a = c;
+	//		b = pathToTravel[pathToTravel.Count - 1].Position;
+	//		c = b;
+	//		for (float t = 0f; t < 1f; t += 0.1f) {
+	//			Gizmos.DrawSphere(Bezier.GetPoint(a, b, c, t), 2f);
+	//		}
+	//	}
 }

@@ -21,6 +21,9 @@ public class HexGrid : MonoBehaviour
 	HexUnit unitPrefab;
 
 	[SerializeField]
+	Base basePrefab;
+
+	[SerializeField]
 	Texture2D noiseSource;
 
 	[SerializeField]
@@ -59,6 +62,8 @@ public class HexGrid : MonoBehaviour
 
 	List<HexUnit> units = new List<HexUnit>();
 
+	List<Base> Bases = new List<Base>();
+
 	HexCellShaderData cellShaderData;
 
 	void Awake ()
@@ -68,22 +73,22 @@ public class HexGrid : MonoBehaviour
 		HexMetrics.noiseSource = noiseSource;
 		HexMetrics.InitializeHashGrid(seed);
 		HexUnit.unitPrefab = unitPrefab;
+		Base.basePrefab = basePrefab;
 		cellShaderData = gameObject.AddComponent<HexCellShaderData>();
 		CreateMap(CellCountX, CellCountZ);
 	}
-
-	/// <summary>
-	/// Add a unit to the map.
-	/// </summary>
-	/// <param name="unit">Unit to add.</param>
-	/// <param name="location">Cell in which to place the unit.</param>
-	/// <param name="orientation">Orientation of the unit.</param>
-	public void AddUnit (HexUnit unit, HexCell location, float orientation)
+	public void AddFeature (Feature feature, HexCell location, float orientation)
 	{
-		units.Add(unit);
-		unit.Grid = this;
-		unit.Location = location;
-		unit.Orientation = orientation;
+		if (feature is HexUnit unitFeature)
+        {
+			units.Add(unitFeature);
+		}else if (feature is Base baseFeature)
+        {
+			Bases.Add(baseFeature);
+        }
+		feature.Grid = this;
+		feature.Location = location;
+		feature.Orientation = orientation;
 	}
 
 	/// <summary>
@@ -335,11 +340,10 @@ public class HexGrid : MonoBehaviour
 		{
 			cells[i].Save(writer);
 		}
-
-		writer.Write(units.Count);
-		for (int i = 0; i < units.Count; i++)
+		writer.Write(Bases.Count);
+		for (int i = 0; i < Bases.Count; i++)
 		{
-			units[i].Save(writer);
+			Bases[i].Save(writer);
 		}
 	}
 
@@ -377,11 +381,18 @@ public class HexGrid : MonoBehaviour
 
 		if (header >= 2)
 		{
-			int unitCount = reader.ReadInt32();
-			for (int i = 0; i < unitCount; i++)
+			try
 			{
-				HexUnit.Load(reader, this);
+				int baseCount = reader.ReadInt32();
+				for (int i = 0; i < baseCount; i++)
+				{
+					Base.Load(reader, this);
+				}
 			}
+            catch
+            {
+				Debug.Log("Problem reading Map");
+            }
 		}
 	}
 
