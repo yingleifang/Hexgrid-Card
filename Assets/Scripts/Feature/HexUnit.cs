@@ -60,7 +60,7 @@ public class HexUnit : Feature
 
 			int nextColumn = currentTravelLocation.ColumnIndex;
 			if (currentColumn != nextColumn){
-				Grid.MakeChildOfColumn(transform, nextColumn);
+				HexGrid.Instance.MakeChildOfColumn(transform, nextColumn);
 				currentColumn = nextColumn;
 			}
 

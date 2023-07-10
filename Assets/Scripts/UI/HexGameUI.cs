@@ -11,7 +11,7 @@ public class HexGameUI : MonoBehaviour {
 
 	HexCell currentCell;
 
-	HexUnit selectedUnit;
+	Feature selectedFeature;
 
 	/// <summary>
 	/// Set whether map edit mode is active.
@@ -28,8 +28,8 @@ public class HexGameUI : MonoBehaviour {
 			if (Input.GetMouseButtonDown(0)) {
 				DoSelection();
 			}
-			else if (selectedUnit) {
-				if (Input.GetMouseButtonDown(1)) {
+			else if (selectedFeature) {
+				if (Input.GetMouseButtonDown(1) && selectedFeature is HexUnit) {
 					DoMove();
 				}
 				else {
@@ -43,14 +43,14 @@ public class HexGameUI : MonoBehaviour {
 		grid.ClearPath();
 		UpdateCurrentCell();
 		if (currentCell) {
-			selectedUnit = (HexUnit)currentCell.Feature;
+			selectedFeature = currentCell.Feature;
 		}
 	}
 
 	void DoPathfinding () {
 		if (UpdateCurrentCell()) {
-			if (currentCell && selectedUnit.IsValidDestination(currentCell)) {
-				grid.FindPath(selectedUnit.Location, currentCell, selectedUnit);
+			if (currentCell && ((HexUnit)selectedFeature).IsValidDestination(currentCell)) {
+				grid.FindPath(selectedFeature.Location, currentCell, (HexUnit)selectedFeature);
 			}
 			else {
 				grid.ClearPath();
@@ -60,7 +60,7 @@ public class HexGameUI : MonoBehaviour {
 
 	void DoMove () {
 		if (grid.HasPath) {
-			selectedUnit.Travel(grid.GetPath());
+			((HexUnit)selectedFeature).Travel(grid.GetPath());
 			grid.ClearPath();
 		}
 	}

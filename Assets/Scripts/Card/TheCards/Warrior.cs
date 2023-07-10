@@ -12,6 +12,10 @@ public class Warrior : UnitCard
 
     public override void UseEffect()
     {
-
+        Feature selected = GameManager.Instance.selectedFeature;
+        if (selected is SpawnPoint)
+        {
+            HexGrid.Instance.AddUnit(selected.Location, selected.Orientation);
+        }
     }
 }

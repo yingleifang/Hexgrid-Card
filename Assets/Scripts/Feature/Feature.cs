@@ -3,8 +3,6 @@ using System.IO;
 
 public class Feature : MonoBehaviour
 {
-    public HexGrid Grid { get; set; }
-
 	protected float orientation;
 
 	protected HexCell location;
@@ -23,7 +21,7 @@ public class Feature : MonoBehaviour
 			location = value;
 			value.Feature = this;
 			transform.localPosition = value.Position;
-			Grid.MakeChildOfColumn(transform, value.ColumnIndex);
+			HexGrid.Instance.MakeChildOfColumn(transform, value.ColumnIndex);
 		}
 	}
 

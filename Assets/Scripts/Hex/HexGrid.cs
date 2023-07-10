@@ -102,9 +102,16 @@ public class HexGrid : MonoBehaviour
         {
 			spawnPoints.Add(spawnPointFeature);
         }
-		feature.Grid = this;
 		feature.Location = location;
 		feature.Orientation = orientation;
+	}
+
+	public void AddUnit(HexCell location, float orientation)
+    {
+		HexUnit unit = Instantiate(unitPrefab);
+		units.Add(unit);
+		unit.Location = location;
+		unit.Orientation = orientation;
 	}
 
 	/// <summary>
@@ -424,7 +431,7 @@ public class HexGrid : MonoBehaviour
 			}
 			catch
 			{
-				Debug.Log("Problem loading ");
+				Debug.Log("Problem loading spawnPoint");
 			}
 		}
 	}
