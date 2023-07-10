@@ -10,9 +10,6 @@ public class HexMapEditor : MonoBehaviour
 	static int cellHighlightingId = Shader.PropertyToID("_CellHighlighting");
 
 	[SerializeField]
-	HexGrid hexGrid;
-
-	[SerializeField]
 	Material terrainMaterial;
 
 	int activeElevation;
@@ -117,7 +114,19 @@ public class HexMapEditor : MonoBehaviour
 				}
 				else
 				{
-					CreateBase();
+					CreateFeature(HexGrid.Instance.basePrefab);
+				}
+				return;
+			}
+			if (Input.GetKeyDown(KeyCode.I))
+			{
+				if (Input.GetKey(KeyCode.LeftShift))
+				{
+					DestroyUnit();
+				}
+				else
+				{
+					CreateFeature(HexGrid.Instance.spawnpointPrefab);
 				}
 				return;
 			}
@@ -130,15 +139,15 @@ public class HexMapEditor : MonoBehaviour
 	}
 
 	HexCell GetCellUnderCursor () =>
-		hexGrid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
+		HexGrid.Instance.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
 
-	void CreateBase ()
+	void CreateFeature(Feature feature)
 	{
 		HexCell cell = GetCellUnderCursor();
 		if (cell && !cell.Feature)
 		{
-			hexGrid.AddFeature(
-				Instantiate(Base.basePrefab), cell, Random.Range(0f, 360f)
+			HexGrid.Instance.AddFeature(
+				Instantiate(feature), cell, Random.Range(0f, 360f)
 			);
 		}
 	}
@@ -148,7 +157,7 @@ public class HexMapEditor : MonoBehaviour
 		HexCell cell = GetCellUnderCursor();
 		if (cell && cell.Feature)
 		{
-			hexGrid.RemoveUnit((HexUnit)cell.Feature);
+			HexGrid.Instance.RemoveUnit((HexUnit)cell.Feature);
 		}
 	}
 
@@ -223,14 +232,14 @@ public class HexMapEditor : MonoBehaviour
 		{
 			for (int x = centerX - r; x <= centerX + brushSize; x++)
 			{
-				EditCell(hexGrid.GetCell(new HexCoordinates(x, z)));
+				EditCell(HexGrid.Instance.GetCell(new HexCoordinates(x, z)));
 			}
 		}
 		for (int r = 0, z = centerZ + brushSize; z > centerZ; z--, r++)
 		{
 			for (int x = centerX - brushSize; x <= centerX + r; x++)
 			{
-				EditCell(hexGrid.GetCell(new HexCoordinates(x, z)));
+				EditCell(HexGrid.Instance.GetCell(new HexCoordinates(x, z)));
 			}
 		}
 	}

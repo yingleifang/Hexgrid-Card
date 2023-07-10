@@ -167,20 +167,6 @@ public class HexUnit : Feature
 		}
 	}
 
-	/// <summary>
-	/// Load the unit data.
-	/// </summary>
-	/// <param name="reader"><see cref="BinaryReader"/> to use.</param>
-	/// <param name="grid"><see cref="HexGrid"/> to add the unit to.</param>
-	public static void Load(BinaryReader reader, HexGrid grid)
-	{
-		HexCoordinates coordinates = HexCoordinates.Load(reader);
-		float orientation = reader.ReadSingle();
-		grid.AddFeature(
-			Instantiate(unitPrefab), grid.GetCell(coordinates), orientation
-		);
-	}
-
 	//	void OnDrawGizmos () {
 	//		if (pathToTravel == null || pathToTravel.Count == 0) {
 	//			return;

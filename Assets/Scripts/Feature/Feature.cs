@@ -54,4 +54,13 @@ public class Feature : MonoBehaviour
 	/// Validate the position of the unit.
 	/// </summary>
 	public void ValidateLocation() => transform.localPosition = location.Position;
+
+	public static void Load(BinaryReader reader, HexGrid grid, Feature feature)
+	{
+		HexCoordinates coordinates = HexCoordinates.Load(reader);
+		float orientation = reader.ReadSingle();
+		grid.AddFeature(
+			Instantiate(feature), grid.GetCell(coordinates), orientation
+		);
+	}
 }

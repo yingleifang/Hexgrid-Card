@@ -542,18 +542,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3876710043614917572, guid: 429f2436b3aad524ab036f95a8cb3aae, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: -19
-      objectReference: {fileID: 0}
     - target: {fileID: 4493236761749487280, guid: 429f2436b3aad524ab036f95a8cb3aae, type: 3}
       propertyPath: m_Name
       value: Canvas
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 6138859241447874276, guid: 429f2436b3aad524ab036f95a8cb3aae, type: 3}
-    - {fileID: 1775524217930128114, guid: 429f2436b3aad524ab036f95a8cb3aae, type: 3}
-    - {fileID: 6850328038553960803, guid: 429f2436b3aad524ab036f95a8cb3aae, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -698,11 +691,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 414a0fc06528949a0baff4f719b04a4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  units: []
+  Bases: []
+  spawnPoints: []
+  unitPrefab: {fileID: 114701888605048992, guid: 5661a1efcb9464721b4db3f694ded559, type: 3}
+  basePrefab: {fileID: 7918952402512787878, guid: cb7be9a74fd6e4cbdb5be2ac7319e699, type: 3}
+  spawnpointPrefab: {fileID: 68927140510841878, guid: 694c4113acb734a299b240d50494600c, type: 3}
   cellPrefab: {fileID: 11422220, guid: 94c2312396697489abc866a188f80152, type: 3}
   cellLabelPrefab: {fileID: 11470134, guid: f68794ca03b6f4510b9a5bd6ee9ba2f4, type: 3}
   chunkPrefab: {fileID: 114000010052569294, guid: 7622d007cafd044a1b1189c0b93d2912, type: 3}
-  unitPrefab: {fileID: 114701888605048992, guid: 5661a1efcb9464721b4db3f694ded559, type: 3}
-  basePrefab: {fileID: 7918952402512787878, guid: cb7be9a74fd6e4cbdb5be2ac7319e699, type: 3}
   noiseSource: {fileID: 2800000, guid: 38701cdeb1fb9427cbb585f917aa59cb, type: 3}
   seed: 1234
 --- !u!4 &1571186512

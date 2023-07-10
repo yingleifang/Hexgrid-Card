@@ -8,6 +8,23 @@ using System.Collections.Generic;
 /// </summary>
 public class HexGrid : MonoBehaviour
 {
+	public static HexGrid Instance { get; private set; }
+
+	public List<HexUnit> units = new List<HexUnit>();
+
+	public List<Base> Bases = new List<Base>();
+
+	public List<SpawnPoint> spawnPoints = new List<SpawnPoint>();
+
+	[SerializeField]
+	public HexUnit unitPrefab;
+
+	[SerializeField]
+	public Base basePrefab;
+
+	[SerializeField]
+	public SpawnPoint spawnpointPrefab;
+
 	[SerializeField]
 	HexCell cellPrefab;
 
@@ -16,12 +33,6 @@ public class HexGrid : MonoBehaviour
 
 	[SerializeField]
 	HexGridChunk chunkPrefab;
-
-	[SerializeField]
-	HexUnit unitPrefab;
-
-	[SerializeField]
-	Base basePrefab;
 
 	[SerializeField]
 	Texture2D noiseSource;
@@ -60,20 +71,22 @@ public class HexGrid : MonoBehaviour
 	HexCell currentPathFrom, currentPathTo;
 	bool currentPathExists;
 
-	List<HexUnit> units = new List<HexUnit>();
-
-	List<Base> Bases = new List<Base>();
-
 	HexCellShaderData cellShaderData;
 
 	void Awake ()
 	{
-		CellCountX = 20;
+        if (Instance != null)
+        {
+            Debug.LogError("There's more than one TurnSystem!");
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+        CellCountX = 20;
 		CellCountZ = 15;
 		HexMetrics.noiseSource = noiseSource;
 		HexMetrics.InitializeHashGrid(seed);
 		HexUnit.unitPrefab = unitPrefab;
-		Base.basePrefab = basePrefab;
 		cellShaderData = gameObject.AddComponent<HexCellShaderData>();
 		CreateMap(CellCountX, CellCountZ);
 	}
@@ -85,6 +98,9 @@ public class HexGrid : MonoBehaviour
 		}else if (feature is Base baseFeature)
         {
 			Bases.Add(baseFeature);
+        }else if (feature is SpawnPoint spawnPointFeature)
+        {
+			spawnPoints.Add(spawnPointFeature);
         }
 		feature.Grid = this;
 		feature.Location = location;
@@ -345,6 +361,11 @@ public class HexGrid : MonoBehaviour
 		{
 			Bases[i].Save(writer);
 		}
+		writer.Write(spawnPoints.Count);
+		for (int i = 0; i < spawnPoints.Count; i++)
+		{
+			spawnPoints[i].Save(writer);
+		}
 	}
 
 	/// <summary>
@@ -386,13 +407,25 @@ public class HexGrid : MonoBehaviour
 				int baseCount = reader.ReadInt32();
 				for (int i = 0; i < baseCount; i++)
 				{
-					Base.Load(reader, this);
+					Feature.Load(reader, this, basePrefab);
 				}
 			}
             catch
             {
-				Debug.Log("Problem reading Map");
+				Debug.Log("Problem loading bases");
             }
+			try
+			{
+				int baseCount = reader.ReadInt32();
+				for (int i = 0; i < baseCount; i++)
+				{
+                    Feature.Load(reader, this, spawnpointPrefab);
+				}
+			}
+			catch
+			{
+				Debug.Log("Problem loading ");
+			}
 		}
 	}
 

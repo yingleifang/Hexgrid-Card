@@ -9,4 +9,9 @@ public class Warrior : UnitCard
     {
         cardType = CardType.MeleeSoldier;
     }
+
+    public override void UseEffect()
+    {
+
+    }
 }
