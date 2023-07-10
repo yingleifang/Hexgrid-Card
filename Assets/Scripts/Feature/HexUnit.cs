@@ -6,14 +6,13 @@ using System.IO;
 /// <summary>
 /// Component representing a unit that occupies a cell of the hex map.
 /// </summary>
-public class HexUnit : MonoBehaviour {
+public class HexUnit : Feature
+{
 
 	const float rotationSpeed = 180f;
 	const float travelSpeed = 4f;
 
 	public static HexUnit unitPrefab;
-
-	public HexGrid Grid { get; set; }
 
 	/// <summary>
 	/// Cell that the unit occupies.

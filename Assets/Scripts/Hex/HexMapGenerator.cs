@@ -39,8 +39,8 @@ public class HexMapGenerator : MonoBehaviour {
 	[SerializeField, Range(-4, 0)]
 	int elevationMinimum = -2;
 
-	[SerializeField, Range(6, 10)]
-	int elevationMaximum = 8;
+	[SerializeField, Range(2, 10)]
+	int elevationMaximum = 2;
 
 	[SerializeField, Range(0, 10)]
 	int mapBorderX = 5;

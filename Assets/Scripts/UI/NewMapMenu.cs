@@ -28,7 +28,7 @@ public class NewMapMenu : MonoBehaviour {
 
 	public void CreateSmallMap () => CreateMap(20, 15);
 
-	public void CreateMediumMap () => CreateMap(40, 30);
+	public void CreateMediumMap () => CreateMap(35, 30);
 
 	public void CreateLargeMap () => CreateMap(80, 60);
 

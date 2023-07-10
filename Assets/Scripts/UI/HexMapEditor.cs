@@ -90,10 +90,10 @@ public class HexMapEditor : MonoBehaviour
 
 	void Awake ()
 	{
-		terrainMaterial.DisableKeyword("_SHOW_GRID");
-		Shader.EnableKeyword("_HEX_MAP_EDIT_MODE");
-		SetEditMode(true);
-	}
+        terrainMaterial.DisableKeyword("_SHOW_GRID");
+        Shader.EnableKeyword("_HEX_MAP_EDIT_MODE");
+        SetEditMode(true);
+    }
 
 	void Update ()
 	{
