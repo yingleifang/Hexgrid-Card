@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -14,7 +15,9 @@ public class GameManager : MonoBehaviour
 
 	const int mapFileVersion = 5;
 
-    private void Awake()
+	public event EventHandler OnSelectedUnitChanged;
+
+	private void Awake()
     {
 		if (Instance != null)
 		{
@@ -34,21 +37,42 @@ public class GameManager : MonoBehaviour
 
 	private void Update()
 	{
+		if (HexGrid.Instance.unitIsBusy)
+		{
+			return;
+		}
 		if (!EventSystem.current.IsPointerOverGameObject())
 		{
 			if (Input.GetMouseButtonDown(0))
 			{
 				DoSelection();
 			}
+			else if (selectedFeature is HexUnit temp)
+			{
+				if (Input.GetMouseButtonDown(1))
+				{
+					temp.GetMoveAction().DoMove();
+				}
+				else
+				{
+					UnitActionSystem.Instance.DoPathfinding((HexUnit)selectedFeature);
+				}
+			}
 		}
 	}
 	void DoSelection()
 	{
-		HexGrid.Instance.ClearPath();
+		HexGrid.Instance.ClearCellColor(Color.blue);
+		HexGrid.Instance.ClearCellColor(Color.white);
 		UpdateCurrentCell();
 		if (currentCell)
 		{
 			selectedFeature = currentCell.Feature;
+			OnSelectedUnitChanged?.Invoke(this, EventArgs.Empty);
+		}
+		if (selectedFeature is HexUnit temp)
+		{
+			HexGrid.Instance.showMoveRange(temp.Location, temp);
 		}
 	}
 	bool UpdateCurrentCell()

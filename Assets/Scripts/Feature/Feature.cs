@@ -3,9 +3,9 @@ using System.IO;
 
 public class Feature : MonoBehaviour
 {
-	protected float orientation;
+	public float orientation;
 
-	protected HexCell location;
+	public  HexCell location;
 	/// <summary>
 	/// Cell that the unit occupies.
 	/// </summary>

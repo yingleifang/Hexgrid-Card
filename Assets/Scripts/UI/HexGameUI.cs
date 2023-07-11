@@ -20,50 +20,50 @@ public class HexGameUI : MonoBehaviour {
 	public void SetEditMode (bool toggle) {
 		enabled = !toggle;
 		grid.ShowUI(!toggle);
-		grid.ClearPath();
+		//grid.ClearPath();
 	}
 
-	void Update () {
-		if (!EventSystem.current.IsPointerOverGameObject()) {
-			if (Input.GetMouseButtonDown(0)) {
-				DoSelection();
-			}
-			else if (selectedFeature) {
-				if (Input.GetMouseButtonDown(1) && selectedFeature is HexUnit) {
-					DoMove();
-				}
-				else {
-					DoPathfinding();
-				}
-			}
-		}
-	}
+	//void Update () {
+	//	if (!EventSystem.current.IsPointerOverGameObject()) {
+	//		if (Input.GetMouseButtonDown(0)) {
+	//			DoSelection();
+	//		}
+	//		else if (selectedFeature) {
+	//			if (Input.GetMouseButtonDown(1) && selectedFeature is HexUnit) {
+	//				DoMove();
+	//			}
+	//			else {
+	//				DoPathfinding();
+	//			}
+	//		}
+	//	}
+	//}
 
-	void DoSelection () {
-		grid.ClearPath();
-		UpdateCurrentCell();
-		if (currentCell) {
-			selectedFeature = currentCell.Feature;
-		}
-	}
+	//void DoSelection () {
+	//	grid.ClearPath();
+	//	UpdateCurrentCell();
+	//	if (currentCell) {
+	//		selectedFeature = currentCell.Feature;
+	//	}
+	//}
 
-	void DoPathfinding () {
-		if (UpdateCurrentCell()) {
-			if (currentCell && ((HexUnit)selectedFeature).IsValidDestination(currentCell)) {
-				grid.FindPath(selectedFeature.Location, currentCell, (HexUnit)selectedFeature);
-			}
-			else {
-				grid.ClearPath();
-			}
-		}
-	}
+	//void DoPathfinding () {
+	//	if (UpdateCurrentCell()) {
+	//		if (currentCell && ((HexUnit)selectedFeature).IsValidDestination(currentCell)) {
+	//			grid.FindPath(selectedFeature.Location, currentCell, (HexUnit)selectedFeature);
+	//		}
+	//		else {
+	//			grid.ClearPath();
+	//		}
+	//	}
+	//}
 
-	void DoMove () {
-		if (grid.HasPath) {
-			((HexUnit)selectedFeature).Travel(grid.GetPath());
-			grid.ClearPath();
-		}
-	}
+	//void DoMove () {
+	//	if (grid.HasPath) {
+	//		((HexUnit)selectedFeature).Travel(grid.GetPath());
+	//		grid.ClearPath();
+	//	}
+	//}
 
 	bool UpdateCurrentCell () {
 		HexCell cell =

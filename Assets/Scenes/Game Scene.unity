@@ -310,6 +310,50 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &235767163
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 235767164}
+  - component: {fileID: 235767165}
+  m_Layer: 0
+  m_Name: UnitActionSystem
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &235767164
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 235767163}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 475.98965, y: -131.54362, z: 322.30453}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &235767165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 235767163}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5ebaa27abb60c04f8fa876940cd7983, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &263034506
 GameObject:
   m_ObjectHideFlags: 0
@@ -449,7 +493,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentMap: Alpha1
-  hexGrid: {fileID: 1571186511}
+  selectedFeature: {fileID: 0}
 --- !u!1001 &726060860
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -694,7 +738,8 @@ MonoBehaviour:
   units: []
   Bases: []
   spawnPoints: []
-  unitPrefab: {fileID: 114701888605048992, guid: 5661a1efcb9464721b4db3f694ded559, type: 3}
+  unitIsBusy: 0
+  unitPrefab: {fileID: 114701888605048992, guid: a60e1aa13fdf7ed44972c98fa7440134, type: 3}
   basePrefab: {fileID: 7918952402512787878, guid: cb7be9a74fd6e4cbdb5be2ac7319e699, type: 3}
   spawnpointPrefab: {fileID: 68927140510841878, guid: 694c4113acb734a299b240d50494600c, type: 3}
   cellPrefab: {fileID: 11422220, guid: 94c2312396697489abc866a188f80152, type: 3}
