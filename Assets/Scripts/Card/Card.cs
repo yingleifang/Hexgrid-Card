@@ -21,7 +21,7 @@ public class Card : ScriptableObject
     public CardType cardType;
     public Sprite backGround;
     public Sprite portrait;
-    public virtual void UseEffect()
+    public void UseEffect()
     {
         Debug.Log("Card Used");
     }

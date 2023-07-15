@@ -24,7 +24,6 @@ public class HexUnit : Feature
 	/// </summary>
 	public int Speed => 24;
 
-	List<HexCell> pathToTravel;
 	void Awake()
 	{
 		moveAction = GetComponent<MoveAction>();

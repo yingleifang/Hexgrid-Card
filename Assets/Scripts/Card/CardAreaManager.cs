@@ -7,16 +7,12 @@ using System.Linq;
 public class CardAreaManager : MonoBehaviour
 {
 
-    [SerializeField]
-    CardDisplay[] CardDisplays;
+    public CardDisplay[] CardDisplays;
     int freeSlot = 0;
 
     [SerializeField] public Sprite[] cardBackGrounds;
+    Player player;
 
-    private void Awake()
-    {
-        //CardDisplays = GetComponentsInChildren<CardDisplay>();
-    }
     public void FillSlots(List<Card> cards)
     {
         foreach (var card in cards)

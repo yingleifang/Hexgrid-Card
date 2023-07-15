@@ -2,6 +2,8 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System;
+using System.Collections.Generic;
 
 public class CardDisplay : MonoBehaviour
 {
@@ -16,6 +18,7 @@ public class CardDisplay : MonoBehaviour
 
     public Card card;
 
+    public event Func<int, (bool, Feature)> CardUsed;
     public void SetCardInfo(Card card)
     {
         this.card = card;
@@ -42,6 +45,24 @@ public class CardDisplay : MonoBehaviour
 
     public void UseCard()
     {
-        card.UseEffect();
+        if (card is Warrior warrior)
+        {
+            var result = CardUsed?.Invoke(card.cost);
+            if (result.HasValue)
+            {
+                if (result.Value.Item1)
+                {
+                    warrior.UseEffect(result.Value.Item2);
+                }
+                else
+                {
+                    Debug.Log("Card cannot be used");
+                }
+            }
+            else
+            {
+                Debug.LogError("CardUsed Invoke returned Null");
+            }
+        }
     }
 }

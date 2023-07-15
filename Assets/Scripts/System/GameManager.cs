@@ -11,11 +11,14 @@ public class GameManager : MonoBehaviour
 
 	HexCell currentCell;
 
-	public Feature selectedFeature;
-
 	const int mapFileVersion = 5;
 
 	public event EventHandler OnSelectedUnitChanged;
+
+	[SerializeField]
+	Player player1;
+
+	public Player currentPlayer;
 
 	private void Awake()
     {
@@ -33,6 +36,7 @@ public class GameManager : MonoBehaviour
     void Start()
 	{
 		Load();
+		currentPlayer = player1;
 	}
 
 	private void Update()
@@ -47,7 +51,7 @@ public class GameManager : MonoBehaviour
 			{
 				DoSelection();
 			}
-			else if (selectedFeature is HexUnit temp)
+			else if (player1.selectedFeature is HexUnit temp)
 			{
 				if (Input.GetMouseButtonDown(1))
 				{
@@ -55,7 +59,7 @@ public class GameManager : MonoBehaviour
 				}
 				else
 				{
-					UnitActionSystem.Instance.DoPathfinding((HexUnit)selectedFeature);
+					UnitActionSystem.Instance.DoPathfinding((HexUnit)player1.selectedFeature);
 				}
 			}
 		}
@@ -67,10 +71,17 @@ public class GameManager : MonoBehaviour
 		UpdateCurrentCell();
 		if (currentCell)
 		{
-			selectedFeature = currentCell.Feature;
-			OnSelectedUnitChanged?.Invoke(this, EventArgs.Empty);
+			if (player1.selectedFeature)
+            {
+				player1.selectedFeature.RaiseFeatureDeSelectedEvent();
+			}
+			player1.selectedFeature = currentCell.Feature;
+			if (player1.selectedFeature)
+			{
+				player1.selectedFeature.RaiseFeatureSelectedEvent();
+			}
 		}
-		if (selectedFeature is HexUnit temp)
+		if (player1.selectedFeature is HexUnit temp)
 		{
 			HexGrid.Instance.showMoveRange(temp.Location, temp);
 		}

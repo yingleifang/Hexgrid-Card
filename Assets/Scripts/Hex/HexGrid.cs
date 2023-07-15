@@ -117,9 +117,10 @@ public class HexGrid : MonoBehaviour
 	public void AddUnit(HexCell location, float orientation)
     {
 		HexUnit unit = Instantiate(unitPrefab);
-		units.Add(unit);
 		unit.Location = location;
 		unit.Orientation = orientation;
+		units.Add(unit);
+		GameManager.Instance.currentPlayer.playerUnit.Add(unit);
 	}
 
 	/// <summary>

@@ -10,12 +10,8 @@ public class Warrior : UnitCard
         cardType = CardType.MeleeSoldier;
     }
 
-    public override void UseEffect()
+    public void UseEffect(Feature selected)
     {
-        Feature selected = GameManager.Instance.selectedFeature;
-        if (selected is SpawnPoint)
-        {
-            HexGrid.Instance.AddUnit(selected.Location, selected.Orientation);
-        }
+        HexGrid.Instance.AddUnit(selected.Location, selected.Orientation);
     }
 }

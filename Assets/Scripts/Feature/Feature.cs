@@ -1,15 +1,29 @@
 using UnityEngine;
 using System.IO;
+using System;
 
 public class Feature : MonoBehaviour
 {
 	public float orientation;
 
 	public  HexCell location;
-	/// <summary>
-	/// Cell that the unit occupies.
-	/// </summary>
-	public HexCell Location
+
+	public FeatureSelectedVisuals featureSelectedVisuals;
+
+	public event EventHandler FeatureSelected;
+
+	public event EventHandler FeatureDeSelected;
+
+
+	private void Awake()
+    {
+		featureSelectedVisuals = GetComponentInChildren<FeatureSelectedVisuals>();
+	}
+
+    /// <summary>
+    /// Cell that the unit occupies.
+    /// </summary>
+    public HexCell Location
 	{
 		get => location;
 		set
@@ -60,5 +74,15 @@ public class Feature : MonoBehaviour
 		grid.AddFeature(
 			Instantiate(feature), grid.GetCell(coordinates), orientation
 		);
+	}
+
+	public void RaiseFeatureSelectedEvent()
+	{
+		FeatureSelected?.Invoke(this, EventArgs.Empty);
+	}
+
+	public void RaiseFeatureDeSelectedEvent()
+	{
+		FeatureDeSelected?.Invoke(this, EventArgs.Empty);
 	}
 }
