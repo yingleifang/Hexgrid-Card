@@ -19,6 +19,21 @@ public class CardDisplay : MonoBehaviour
     public Card card;
 
     public event Func<int, (bool, Feature)> CardUsed;
+
+    [SerializeField] CanvasGroup CardInfo;
+
+    float dissolveAmount = 1;
+
+    [SerializeField] Material material;
+
+    Material myMaterial;
+
+    private void Awake()
+    {
+        myMaterial = new Material(material);
+        portraitImage.material = myMaterial;
+        backGroundImage.material = myMaterial;
+    }
     public void SetCardInfo(Card card)
     {
         this.card = card;
@@ -52,6 +67,8 @@ public class CardDisplay : MonoBehaviour
             {
                 if (result.Value.Item1)
                 {
+                    StartCoroutine(StartDissolving());
+                    StartCoroutine(StartFading());
                     warrior.UseEffect(result.Value.Item2);
                 }
                 else
@@ -64,5 +81,27 @@ public class CardDisplay : MonoBehaviour
                 Debug.LogError("CardUsed Invoke returned Null");
             }
         }
+    }
+
+    IEnumerator StartDissolving()
+    {
+        while (dissolveAmount > 0)
+        {
+            dissolveAmount = Mathf.Clamp01(dissolveAmount - Time.deltaTime);
+            portraitImage.material.SetFloat("_DissolveAmount", dissolveAmount);
+            backGroundImage.material.SetFloat("_DissolveAmount", dissolveAmount);
+            yield return null;
+        }
+        yield return null;
+    }
+
+    IEnumerator StartFading()
+    {
+        while (CardInfo.alpha > 0)
+        {
+            CardInfo.alpha = Mathf.Clamp01(CardInfo.alpha - Time.deltaTime);
+            yield return null;
+        }
+        yield return null;
     }
 }
