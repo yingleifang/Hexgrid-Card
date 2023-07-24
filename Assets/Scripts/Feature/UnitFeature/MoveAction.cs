@@ -19,9 +19,9 @@ public class MoveAction : BaseAction
 	/// <param name="path">List of cells that describe a valid path.</param>
 	void Travel(List<HexCell> path)
 	{
-		unit.location.Feature = null;
+		unit.location.unitFeature = null;
 		unit.location = path[path.Count - 1];
-		unit.location.Feature = unit;
+		unit.location.unitFeature = unit;
 		pathToTravel = path;
 		StopAllCoroutines();
 		StartCoroutine(TravelPath());

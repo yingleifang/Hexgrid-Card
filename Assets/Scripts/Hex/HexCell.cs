@@ -280,7 +280,13 @@ public class HexCell : MonoBehaviour
 	/// <summary>
 	/// Unit currently occupying the cell, if any.
 	/// </summary>
-	public Feature Feature
+	public UnitFeature unitFeature
+	{ get; set; }
+
+	/// <summary>
+	/// Unit currently occupying the cell, if any.
+	/// </summary>
+	public TerrainFeature terrainFeature
 	{ get; set; }
 
 	/// <summary>
@@ -566,9 +572,9 @@ public class HexCell : MonoBehaviour
 					neighbor.Chunk.Refresh();
 				}
 			}
-			if (Feature)
+			if (unitFeature)
 			{
-				Feature.ValidateLocation();
+				unitFeature.ValidateLocation();
 			}
 		}
 	}
@@ -576,9 +582,9 @@ public class HexCell : MonoBehaviour
 	void RefreshSelfOnly ()
 	{
 		Chunk.Refresh();
-		if (Feature)
+		if (unitFeature)
 		{
-			Feature.ValidateLocation();
+			unitFeature.ValidateLocation();
 		}
 	}
 

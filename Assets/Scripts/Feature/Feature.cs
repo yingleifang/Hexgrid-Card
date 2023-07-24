@@ -6,7 +6,7 @@ public class Feature : MonoBehaviour
 {
 	public float orientation;
 
-	public  HexCell location;
+	public HexCell location;
 
 	public FeatureSelectedVisuals featureSelectedVisuals;
 
@@ -23,21 +23,8 @@ public class Feature : MonoBehaviour
     /// <summary>
     /// Cell that the unit occupies.
     /// </summary>
-    public HexCell Location
-	{
-		get => location;
-		set
-		{
-			if (location)
-			{
-				location.Feature = null;
-			}
-			location = value;
-			value.Feature = this;
-			transform.localPosition = value.Position;
-			HexGrid.Instance.MakeChildOfColumn(transform, value.ColumnIndex);
-		}
-	}
+    public virtual HexCell Location
+	{ get; set; }
 
 	/// <summary>
 	/// Orientation that the unit is facing.

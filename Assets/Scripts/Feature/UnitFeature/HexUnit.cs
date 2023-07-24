@@ -6,7 +6,7 @@ using System.IO;
 /// <summary>
 /// Component representing a unit that occupies a cell of the hex map.
 /// </summary>
-public class HexUnit : Feature
+public class HexUnit : UnitFeature
 {
 
 	MoveAction moveAction;
@@ -35,7 +35,7 @@ public class HexUnit : Feature
 	/// </summary>
 	/// <param name="cell">Cell to check.</param>
 	/// <returns>Whether the unit could occupy the cell.</returns>
-	public bool IsValidDestination (HexCell cell) => !cell.IsUnderwater && !cell.Feature;
+	public bool IsValidDestination (HexCell cell) => !cell.IsUnderwater && !cell.unitFeature;
 
 	/// <summary>
 	/// Get the movement cost of moving from one cell to another.
@@ -73,7 +73,7 @@ public class HexUnit : Feature
 	/// Terminate the unit.
 	/// </summary>
 	public void Die () {
-		location.Feature = null;
+		location.unitFeature = null;
 		Destroy(gameObject);
 	}
 

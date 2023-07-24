@@ -18,7 +18,11 @@ public class CardDisplay : MonoBehaviour
 
     public Card card;
 
-    public event Func<int, (bool, Feature)> CardUsed;
+    public event Func<int, (bool, Feature)> UseCardChecks;
+
+    public event Action<int> OnCardUsed;
+
+    public bool CardUsed = false;
 
     [SerializeField] CanvasGroup CardInfo;
 
@@ -28,11 +32,14 @@ public class CardDisplay : MonoBehaviour
 
     Material myMaterial;
 
+    Card.UseEffectArgs useEffectArgs;
+
     private void Awake()
     {
         myMaterial = new Material(material);
         portraitImage.material = myMaterial;
         backGroundImage.material = myMaterial;
+        useEffectArgs = new Card.UseEffectArgs();
     }
     public void SetCardInfo(Card card)
     {
@@ -60,16 +67,23 @@ public class CardDisplay : MonoBehaviour
 
     public void UseCard()
     {
-        if (card is Warrior warrior)
+        if (CardUsed)
         {
-            var result = CardUsed?.Invoke(card.cost);
+            return;
+        }
+        if (card is UnitCard unitCard)
+        {
+            var result = UseCardChecks?.Invoke(card.cost);
             if (result.HasValue)
             {
-                if (result.Value.Item1)
+                if (result.Value.Item1) //Card is Used
                 {
+                    CardUsed = true;
+                    OnCardUsed?.Invoke(card.cost);
                     StartCoroutine(StartDissolving());
                     StartCoroutine(StartFading());
-                    warrior.UseEffect(result.Value.Item2);
+                    useEffectArgs.feature = result.Value.Item2;
+                    unitCard.UseEffect(useEffectArgs);
                 }
                 else
                 {

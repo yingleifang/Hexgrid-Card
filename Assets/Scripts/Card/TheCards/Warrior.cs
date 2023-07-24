@@ -10,8 +10,8 @@ public class Warrior : UnitCard
         cardType = CardType.MeleeSoldier;
     }
 
-    public void UseEffect(Feature selected)
+    public override void UseEffect(UseEffectArgs useEffectArgs)
     {
-        HexGrid.Instance.AddUnit(selected.Location, selected.Orientation);
+        HexGrid.Instance.AddUnit(useEffectArgs.feature.Location, useEffectArgs.feature.Orientation);
     }
 }

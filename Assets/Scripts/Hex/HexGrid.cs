@@ -119,6 +119,7 @@ public class HexGrid : MonoBehaviour
 		HexUnit unit = Instantiate(unitPrefab);
 		unit.Location = location;
 		unit.Orientation = orientation;
+		location.unitFeature = unit;
 		units.Add(unit);
 		GameManager.Instance.currentPlayer.playerUnit.Add(unit);
 	}

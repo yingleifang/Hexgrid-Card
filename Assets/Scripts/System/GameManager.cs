@@ -13,7 +13,7 @@ public class GameManager : MonoBehaviour
 
 	const int mapFileVersion = 5;
 
-	public event EventHandler OnSelectedUnitChanged;
+	//public event EventHandler OnSelectedUnitChanged;
 
 	[SerializeField]
 	Player player1;
@@ -30,13 +30,13 @@ public class GameManager : MonoBehaviour
 		}
 		Instance = this;
 		Shader.EnableKeyword("_HEX_MAP_EDIT_MODE");
+		currentPlayer = player1;
 	}
 
     // Start is called before the first frame update
     void Start()
 	{
 		Load();
-		currentPlayer = player1;
 	}
 
 	private void Update()
@@ -75,7 +75,14 @@ public class GameManager : MonoBehaviour
             {
 				player1.selectedFeature.RaiseFeatureDeSelectedEvent();
 			}
-			player1.selectedFeature = currentCell.Feature;
+			if (currentCell.unitFeature != null)
+            {
+				player1.selectedFeature = currentCell.unitFeature;
+            }
+            else
+            {
+				player1.selectedFeature = currentCell.terrainFeature;
+			}
 			if (player1.selectedFeature)
 			{
 				player1.selectedFeature.RaiseFeatureSelectedEvent();

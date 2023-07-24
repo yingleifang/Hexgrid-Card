@@ -28,8 +28,10 @@ public class CardAreaManager : MonoBehaviour
     {
         foreach (int i in cardIndex)
         {
+            CardDisplays[i].CardUsed = false;
             StartCoroutine(CardDisplays[i].Reveal());
             yield return new WaitForSeconds(0.5f);
         }
+        GameUIHandler.Instance.enableCanvasGroupRayCast();
     }
 }

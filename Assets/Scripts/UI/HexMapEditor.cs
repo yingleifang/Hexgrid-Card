@@ -114,7 +114,7 @@ public class HexMapEditor : MonoBehaviour
 				}
 				else
 				{
-					CreateFeature(HexGrid.Instance.basePrefab);
+					CreateUnitFeature(HexGrid.Instance.basePrefab);
 				}
 				return;
 			}
@@ -126,7 +126,7 @@ public class HexMapEditor : MonoBehaviour
 				}
 				else
 				{
-					CreateFeature(HexGrid.Instance.spawnpointPrefab);
+					CreateTerrainFeature(HexGrid.Instance.spawnpointPrefab);
 				}
 				return;
 			}
@@ -141,13 +141,23 @@ public class HexMapEditor : MonoBehaviour
 	HexCell GetCellUnderCursor () =>
 		HexGrid.Instance.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
 
-	void CreateFeature(Feature feature)
+	void CreateUnitFeature(UnitFeature unitFeature)
 	{
 		HexCell cell = GetCellUnderCursor();
-		if (cell && !cell.Feature)
+		if (cell && !cell.unitFeature)
 		{
 			HexGrid.Instance.AddFeature(
-				Instantiate(feature), cell, Random.Range(0f, 360f)
+				Instantiate(unitFeature), cell, Random.Range(0f, 360f)
+			);
+		}
+	}
+	void CreateTerrainFeature(TerrainFeature terrainFeature)
+	{
+		HexCell cell = GetCellUnderCursor();
+		if (cell && !cell.terrainFeature)
+		{
+			HexGrid.Instance.AddFeature(
+				Instantiate(terrainFeature), cell, Random.Range(0f, 360f)
 			);
 		}
 	}
@@ -155,9 +165,9 @@ public class HexMapEditor : MonoBehaviour
 	void DestroyUnit ()
 	{
 		HexCell cell = GetCellUnderCursor();
-		if (cell && cell.Feature)
+		if (cell && cell.unitFeature)
 		{
-			HexGrid.Instance.RemoveUnit((HexUnit)cell.Feature);
+			HexGrid.Instance.RemoveUnit((HexUnit)cell.unitFeature);
 		}
 	}
 

@@ -21,7 +21,17 @@ public class Card : ScriptableObject
     public CardType cardType;
     public Sprite backGround;
     public Sprite portrait;
-    public void UseEffect()
+
+    public struct UseEffectArgs
+    {
+        public Feature feature;
+
+        public UseEffectArgs(Feature feature = null)
+        {
+            this.feature = feature;
+        }
+    }
+    public virtual void UseEffect(UseEffectArgs useEffect)
     {
         Debug.Log("Card Used");
     }

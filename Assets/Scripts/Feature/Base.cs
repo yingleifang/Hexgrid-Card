@@ -3,6 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
-public class Base : Feature
+public class Base : UnitFeature
 {
 }

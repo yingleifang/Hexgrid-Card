@@ -10,13 +10,14 @@ public class Player : MonoBehaviour
     int draws = 3;
     int maxCards = 7;
     int maxUnit = 5;
-    [SerializeField]
-    int energy = 10;
+    public int curMana = 10;
+    public int maxMana = 10;
     [SerializeField]
     CardDatabase cardDatabase;
     [SerializeField]
     CardAreaManager cardArea;
-    
+    [SerializeField]
+    ManaSystemUI manaSystemUI;
     public Feature selectedFeature;
 
     public List<HexUnit> playerUnit; 
@@ -24,13 +25,22 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        curMana = maxMana;
         foreach(var cardDisplay in cardArea.CardDisplays)
         {
-            cardDisplay.CardUsed += Player_WarriorCardCheck;
+            cardDisplay.UseCardChecks += Player_WarriorCardCheck;
+            cardDisplay.OnCardUsed += ConsumeMana;
         }
         initializeBase();
         deck.AddRange(cardDatabase.Draw());
         cardArea.FillSlots(deck);
+        TurnManager.Instance.OnTurnChanged += Player_OnTurnChanged;
+    }
+
+    private void Player_OnTurnChanged(object sender, EventArgs e)
+    {
+        curMana = maxMana;
+        manaSystemUI.UpdateManaText();
     }
 
     // Update is called once per frame
@@ -52,16 +62,21 @@ public class Player : MonoBehaviour
 
     (bool, Feature) Player_WarriorCardCheck(int cost)
     {
-        if (selectedFeature is not SpawnPoint)
+        if (selectedFeature is not SpawnPoint || selectedFeature.location.unitFeature != null)
         {
             return (false, null);
         }
-        if (energy - cost >= 0)
+        if (curMana - cost >= 0)
         {
-            energy -= cost;
             return (true, selectedFeature);
         }
 
         return (false, null);
+    }
+
+    void ConsumeMana(int cost)
+    {
+        curMana -= cost;
+        manaSystemUI.UpdateManaText();
     }
 }
