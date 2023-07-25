@@ -6,11 +6,10 @@ using UnityEngine;
 public class TurnManager : MonoBehaviour
 {
 	public static TurnManager Instance { get; private set; }
-
 	public event EventHandler OnTurnChanged;
+	public bool isPlayer1Turn = true;
 
 	private int turnNumber = 1;
-
 
 	private void Awake()
 	{
@@ -25,6 +24,7 @@ public class TurnManager : MonoBehaviour
 	public void NextTurn()
 	{
 		turnNumber++;
+		isPlayer1Turn = !isPlayer1Turn;
 		OnTurnChanged?.Invoke(this, EventArgs.Empty);
 	}
 

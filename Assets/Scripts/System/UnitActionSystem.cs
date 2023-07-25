@@ -8,8 +8,6 @@ public class UnitActionSystem : MonoBehaviour
 {
 	public static UnitActionSystem Instance { get; private set; }
 
-	HexCell currentCell;
-
 	private void Awake()
 	{
 		if (Instance != null)
@@ -20,29 +18,26 @@ public class UnitActionSystem : MonoBehaviour
 		}
 		Instance = this;
 	}
-	public void DoPathfinding(HexUnit seletedUnit)
+	public void DoPathfinding(HexUnit seletedUnit, HexCell toCell)
 	{
-		if (UpdateCurrentCell())
+		if (toCell && seletedUnit.IsValidDestination(toCell))
 		{
-			if (currentCell && seletedUnit.IsValidDestination(currentCell))
-			{
-				HexGrid.Instance.FindPath(seletedUnit.Location, currentCell, seletedUnit);
-			}
-			else
-			{
-				HexGrid.Instance.ClearCellColor(Color.blue);
-			}
+			HexGrid.Instance.FindPath(seletedUnit.Location, toCell, seletedUnit);
+		}
+		else
+		{
+			HexGrid.Instance.ClearCellColor(Color.blue);
 		}
 	}
-	bool UpdateCurrentCell()
+	public bool CanAttack(HexUnit seletedUnit, HexCell toCell)
 	{
-		HexCell cell =
-			HexGrid.Instance.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
-		if (cell != currentCell)
+		if (seletedUnit.Location.Coordinates.DistanceTo(toCell.Coordinates) <= seletedUnit.AttackRange)
 		{
-			currentCell = cell;
 			return true;
 		}
-		return false;
+		else
+		{
+			return false;
+		}
 	}
 }

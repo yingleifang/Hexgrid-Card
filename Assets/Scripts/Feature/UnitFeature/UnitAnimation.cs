@@ -14,14 +14,15 @@ public class UnitAnimation : MonoBehaviour
         myUnit.GetMoveAction().StartMoving += UnitAnimation_StartMoving;
         myUnit.GetMoveAction().StopMoving += UnitAnimation_StopMoving;
     }
-
+    public void UnitAnimation_Attack()
+    {
+        unitAnimator.SetTrigger("attack");
+    }
     void UnitAnimation_StartMoving(object sender, EventArgs empty)
     {
         HexGrid.Instance.unitIsBusy = true;
         unitAnimator.SetBool("isRunning", true);
     }
-
-
     void UnitAnimation_StopMoving(object sender, EventArgs empty)
     {
         unitAnimator.SetBool("isRunning", false);

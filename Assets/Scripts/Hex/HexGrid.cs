@@ -55,10 +55,14 @@ public class HexGrid : MonoBehaviour
 	public int CellCountZ
 	{ get; private set; }
 
+	public HexCell currentPathFrom, currentPathTo;
+
+	public List<HexCell> curPath;
+
 	/// <summary>
 	/// Whether there currently exists a path that should be displayed.
 	/// </summary>
-	public bool HasPath => currentPathExists;
+	public bool HasPath => CurrentPathExists;
 
 	HexGridChunk[] chunks;
 	HexCell[] cells;
@@ -69,8 +73,7 @@ public class HexGrid : MonoBehaviour
 
 	int searchFrontierPhase;
 
-	HexCell currentPathFrom, currentPathTo;
-	bool currentPathExists;
+	public bool CurrentPathExists { get; private set; }
 
 	HexCellShaderData cellShaderData;
 
@@ -114,7 +117,7 @@ public class HexGrid : MonoBehaviour
 		feature.Orientation = orientation;
 	}
 
-	public void AddUnit(HexCell location, float orientation)
+	public HexUnit AddUnit(HexCell location, float orientation)
     {
 		HexUnit unit = Instantiate(unitPrefab);
 		unit.Location = location;
@@ -122,6 +125,8 @@ public class HexGrid : MonoBehaviour
 		location.unitFeature = unit;
 		units.Add(unit);
 		GameManager.Instance.currentPlayer.playerUnit.Add(unit);
+		unit.myPlayer = GameManager.Instance.currentPlayer;
+		return unit;
 	}
 
 	/// <summary>
@@ -450,25 +455,32 @@ public class HexGrid : MonoBehaviour
 	/// Get a list of cells representing the currently visible path.
 	/// </summary>
 	/// <returns>The current path list, if a visible path exists.</returns>
-	public List<HexCell> GetPath ()
+	public bool GetPath ()
 	{
-		if (!currentPathExists)
+		if (!CurrentPathExists)
 		{
-			return null;
+			return false;
 		}
-		List<HexCell> path = ListPool<HexCell>.Get();
-		for (HexCell c = currentPathTo; c != currentPathFrom; c = c.PathFrom)
+		curPath = ListPool<HexCell>.Get();
+		int loopTimes = 0;
+		for (HexCell c = currentPathTo; c != currentPathFrom && loopTimes < 300; c = c.PathFrom)
 		{
-			path.Add(c);
+			curPath.Add(c);
+			loopTimes += 1;
+			if (loopTimes > 200)
+            {
+				Debug.Log("GetPath Bug");
+				return false;
+            }
 		}
-		path.Add(currentPathFrom);
-		path.Reverse();
-		return path;
+		curPath.Add(currentPathFrom);
+		curPath.Reverse();
+		return true;
 	}
 
 	void ShowPath()
 	{
-		if (currentPathExists)
+		if (CurrentPathExists)
 		{
 			HexCell current = currentPathTo;
 			while (current != currentPathFrom)
@@ -494,7 +506,7 @@ public class HexGrid : MonoBehaviour
 		ClearCellColor(Color.blue); ;
 		currentPathFrom = fromCell;
 		currentPathTo = toCell;
-		currentPathExists = Search(fromCell, toCell, unit);
+		CurrentPathExists = Search(fromCell, toCell, unit);
 		ShowPath();
 	}
 

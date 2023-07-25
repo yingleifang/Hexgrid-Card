@@ -12,6 +12,6 @@ public class Warrior : UnitCard
 
     public override void UseEffect(UseEffectArgs useEffectArgs)
     {
-        HexGrid.Instance.AddUnit(useEffectArgs.feature.Location, useEffectArgs.feature.Orientation);
+        HexGrid.Instance.AddUnit(useEffectArgs.feature.Location, useEffectArgs.feature.Orientation).AttackRange = attackRange;
     }
 }

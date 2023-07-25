@@ -4,6 +4,8 @@ using UnityEngine;
 
 public abstract class UnitFeature : Feature
 {
+	[SerializeField]
+	int UnitFeatureHealth;
 	public override HexCell Location
 	{
 		get => location;
@@ -18,6 +20,13 @@ public abstract class UnitFeature : Feature
 			transform.localPosition = value.Position;
 			HexGrid.Instance.MakeChildOfColumn(transform, value.ColumnIndex);
 		}
+	}
+
+	public void TakeDamage(int damage)
+    {
+		Debug.Log("Hurt!!!!");
+		UnitFeatureHealth -= damage;
+
 	}
 
 }

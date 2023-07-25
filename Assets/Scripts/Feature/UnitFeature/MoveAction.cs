@@ -9,20 +9,19 @@ public class MoveAction : BaseAction
 
 	public event EventHandler StopMoving;
 
-
-	List<HexCell> pathToTravel;
-
-
 	/// <summary>
 	/// Travel along a path.
 	/// </summary>
 	/// <param name="path">List of cells that describe a valid path.</param>
-	void Travel(List<HexCell> path)
+	void Travel(bool hasPath)
 	{
+		if (!hasPath)
+        {
+			return;
+        }
 		unit.location.unitFeature = null;
-		unit.location = path[path.Count - 1];
+		unit.location = HexGrid.Instance.curPath[^1];
 		unit.location.unitFeature = unit;
-		pathToTravel = path;
 		StopAllCoroutines();
 		StartCoroutine(TravelPath());
 	}
@@ -30,21 +29,21 @@ public class MoveAction : BaseAction
 	IEnumerator TravelPath()
 	{
 		StartMoving?.Invoke(this, EventArgs.Empty);
-		Vector3 a, b, c = pathToTravel[0].Position;
-		yield return unit.GetLookAtAction().LookAt(pathToTravel[1].Position);
+		Vector3 a, b, c = HexGrid.Instance.curPath[0].Position;
+		yield return unit.GetLookAtAction().LookAt(HexGrid.Instance.curPath[1].Position);
 
 		if (!unit.currentTravelLocation)
 		{
-			unit.currentTravelLocation = pathToTravel[0];
+			unit.currentTravelLocation = HexGrid.Instance.curPath[0];
 		}
 		int currentColumn = unit.currentTravelLocation.ColumnIndex;
 
 		float t = Time.deltaTime * unit.travelSpeed;
-		for (int i = 1; i < pathToTravel.Count; i++)
+		for (int i = 1; i < HexGrid.Instance.curPath.Count; i++)
 		{
-			unit.currentTravelLocation = pathToTravel[i];
+			unit.currentTravelLocation = HexGrid.Instance.curPath[i];
 			a = c;
-			b = pathToTravel[i - 1].Position;
+			b = HexGrid.Instance.curPath[i - 1].Position;
 
 			int nextColumn = unit.currentTravelLocation.ColumnIndex;
 			if (currentColumn != nextColumn)
@@ -81,8 +80,8 @@ public class MoveAction : BaseAction
 
 		transform.localPosition = unit.location.Position;
 		unit.orientation = transform.localRotation.eulerAngles.y;
-		ListPool<HexCell>.Add(pathToTravel);
-		pathToTravel = null;
+		ListPool<HexCell>.Add(HexGrid.Instance.curPath);
+		HexGrid.Instance.curPath = null;
 		StopMoving?.Invoke(this, EventArgs.Empty);
 	}
 

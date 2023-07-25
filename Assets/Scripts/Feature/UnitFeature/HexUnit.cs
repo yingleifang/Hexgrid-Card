@@ -11,9 +11,11 @@ public class HexUnit : UnitFeature
 
 	MoveAction moveAction;
 	LookAtAction lookAtAction;
+	AttackAction attackAction;
 
 	public float rotationSpeed = 180f;
 	public float travelSpeed = 4f;
+	public int attackDamage = 3;
 
 	public static HexUnit unitPrefab;
 
@@ -24,10 +26,13 @@ public class HexUnit : UnitFeature
 	/// </summary>
 	public int Speed => 24;
 
+	public int AttackRange = 0;
+
 	void Awake()
 	{
 		moveAction = GetComponent<MoveAction>();
 		lookAtAction = GetComponent<LookAtAction>();
+		attackAction = GetComponent<AttackAction>();
 	}
 
 	/// <summary>
@@ -92,6 +97,11 @@ public class HexUnit : UnitFeature
 	public LookAtAction GetLookAtAction()
 	{
 		return lookAtAction;
+	}
+
+	public AttackAction GetAttackAction()
+	{
+		return attackAction;
 	}
 
 	//	void OnDrawGizmos () {

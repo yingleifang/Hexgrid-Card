@@ -9,14 +9,14 @@ public class GameManager : MonoBehaviour
 	[SerializeField]
 	string currentMap = "Alpha1";
 
-	HexCell currentCell;
-
 	const int mapFileVersion = 5;
 
 	//public event EventHandler OnSelectedUnitChanged;
 
 	[SerializeField]
-	Player player1;
+	public Player player1;
+
+	public Player player2;
 
 	public Player currentPlayer;
 
@@ -31,6 +31,7 @@ public class GameManager : MonoBehaviour
 		Instance = this;
 		Shader.EnableKeyword("_HEX_MAP_EDIT_MODE");
 		currentPlayer = player1;
+		TurnManager.Instance.OnTurnChanged += GameManager_OnTurnChanged;
 	}
 
     // Start is called before the first frame update
@@ -38,71 +39,20 @@ public class GameManager : MonoBehaviour
 	{
 		Load();
 	}
-
+	private void GameManager_OnTurnChanged(object sender, EventArgs e)
+	{
+		if (currentPlayer == player1)
+        {
+			currentPlayer = player2;
+        }
+        else
+        {
+			currentPlayer = player1;
+			Debug.Log(currentPlayer);
+		}
+	}
 	private void Update()
 	{
-		if (HexGrid.Instance.unitIsBusy)
-		{
-			return;
-		}
-		if (!EventSystem.current.IsPointerOverGameObject())
-		{
-			if (Input.GetMouseButtonDown(0))
-			{
-				DoSelection();
-			}
-			else if (player1.selectedFeature is HexUnit temp)
-			{
-				if (Input.GetMouseButtonDown(1))
-				{
-					temp.GetMoveAction().DoMove();
-				}
-				else
-				{
-					UnitActionSystem.Instance.DoPathfinding((HexUnit)player1.selectedFeature);
-				}
-			}
-		}
-	}
-	void DoSelection()
-	{
-		HexGrid.Instance.ClearCellColor(Color.blue);
-		HexGrid.Instance.ClearCellColor(Color.white);
-		UpdateCurrentCell();
-		if (currentCell)
-		{
-			if (player1.selectedFeature)
-            {
-				player1.selectedFeature.RaiseFeatureDeSelectedEvent();
-			}
-			if (currentCell.unitFeature != null)
-            {
-				player1.selectedFeature = currentCell.unitFeature;
-            }
-            else
-            {
-				player1.selectedFeature = currentCell.terrainFeature;
-			}
-			if (player1.selectedFeature)
-			{
-				player1.selectedFeature.RaiseFeatureSelectedEvent();
-			}
-		}
-		if (player1.selectedFeature is HexUnit temp)
-		{
-			HexGrid.Instance.showMoveRange(temp.Location, temp);
-		}
-	}
-	bool UpdateCurrentCell()
-	{
-		HexCell cell =
-			HexGrid.Instance.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
-		if (cell != currentCell)
-		{
-			currentCell = cell;
-			return true;
-		}
-		return false;
 	}
 
 	void Load()

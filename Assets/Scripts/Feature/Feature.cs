@@ -14,7 +14,7 @@ public class Feature : MonoBehaviour
 
 	public event EventHandler FeatureDeSelected;
 
-
+	public Player myPlayer;
 	private void Awake()
     {
 		featureSelectedVisuals = GetComponentInChildren<FeatureSelectedVisuals>();
