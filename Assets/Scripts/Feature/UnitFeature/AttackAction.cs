@@ -6,22 +6,43 @@ public class AttackAction : BaseAction
 {
     UnitAnimation unitAnimation;
 
-    HexCell target;
+    float HitDealy = 0.3f;
+    float DeathDelay = 2f;
+
+    UnitFeature target;
     private void Start()
     {
         unitAnimation = GetComponentInChildren<UnitAnimation>();
     }
     public void DoAttack()
     {
-        target = unit.myPlayer.CurrentCell;
+        target = unit.myPlayer.CurrentCell.unitFeature;
         StartCoroutine(Hitting());
     }
 
     IEnumerator Hitting()
     {
-        yield return unit.GetLookAtAction().LookAt(target.Position);
+        yield return unit.GetLookAtAction().LookAt(target.location.Position);
         unitAnimation.UnitAnimation_Attack();
-        yield return new WaitForSeconds(0.5f);
-        target.unitFeature.TakeDamage(unit.attackDamage);
+        yield return new WaitForSeconds(HitDealy);
+        HitTarget();
+    }
+
+    public void HitTarget()
+    {
+        target.TakeDamage(unit.attackDamage);
+    }
+
+    public void PlayGetHitAnim()
+    {
+        unitAnimation.UnitAnimation_GetHit();
+    }
+
+    public IEnumerator Death()
+    {
+        yield return new WaitForSeconds(HitDealy);
+        unitAnimation.UnitAnimation_Death();
+        yield return new WaitForSeconds(DeathDelay);
+        Destroy(gameObject);
     }
 }

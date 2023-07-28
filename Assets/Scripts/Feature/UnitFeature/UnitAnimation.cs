@@ -10,7 +10,7 @@ public class UnitAnimation : MonoBehaviour
     {
         unitAnimator = FindObjectOfType<Animator>();
         unitAnimator.fireEvents = false;
-        HexUnit myUnit = transform.parent.GetComponentInChildren<HexUnit>();
+        HexUnit myUnit = GetComponent<HexUnit>();
         myUnit.GetMoveAction().StartMoving += UnitAnimation_StartMoving;
         myUnit.GetMoveAction().StopMoving += UnitAnimation_StopMoving;
     }
@@ -18,6 +18,17 @@ public class UnitAnimation : MonoBehaviour
     {
         unitAnimator.SetTrigger("attack");
     }
+
+    public void UnitAnimation_GetHit()
+    {
+        unitAnimator.SetTrigger("getHit");
+    }
+
+    public void UnitAnimation_Death()
+    {
+        unitAnimator.SetTrigger("Die");
+    }
+
     void UnitAnimation_StartMoving(object sender, EventArgs empty)
     {
         HexGrid.Instance.unitIsBusy = true;
