@@ -13,7 +13,7 @@ public class MoveAction : BaseAction
 	/// Travel along a path.
 	/// </summary>
 	/// <param name="path">List of cells that describe a valid path.</param>
-	void Travel(bool hasPath)
+	public void Travel(bool hasPath)
 	{
 		if (!hasPath)
         {
@@ -26,7 +26,7 @@ public class MoveAction : BaseAction
 		StartCoroutine(TravelPath());
 	}
 
-	IEnumerator TravelPath()
+	public IEnumerator TravelPath()
 	{
 		StartMoving?.Invoke(this, EventArgs.Empty);
 		Vector3 a, b, c = HexGrid.Instance.curPath[0].Position;

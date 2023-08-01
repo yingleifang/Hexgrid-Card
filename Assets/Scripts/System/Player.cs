@@ -22,7 +22,11 @@ public class Player : MonoBehaviour
     public HexCell CurrentCell { get; private set; }
     public Feature selectedFeature;
 
-    public List<HexUnit> playerUnit;
+    public List<HexUnit> myUnits;
+
+    public List<Base> myBases;
+
+    public List<SpawnPoint> myspawnPoints;
 
     bool CurrentCellChanged;
     // Start is called before the first frame update
@@ -52,35 +56,35 @@ public class Player : MonoBehaviour
         curMana = maxMana;
         manaSystemUI.UpdateManaText();
     }
-
-    // Update is called once per frame
-    void Update()
+    public virtual void TakeAction()
     {
-        if (this != GameManager.Instance.currentPlayer) { return; }
-        if (HexGrid.Instance.unitIsBusy) { return; }
         if (!EventSystem.current.IsPointerOverGameObject())
         {
             if (Input.GetMouseButtonDown(0))
             {
                 DoSelection();
             }
-            else if (selectedFeature is HexUnit temp)
+            else if(selectedFeature is HexUnit temp)
             {
                 UpdateCurrentCell();
-                if (Input.GetMouseButtonDown(1))
+                if (CurrentCell)
                 {
-                    if (CurrentCell.unitFeature != null && CurrentCell.unitFeature != selectedFeature &&
-                        UnitActionSystem.Instance.CanAttack(temp, CurrentCell))
+                    if (Input.GetMouseButtonDown(1))
                     {
-                        temp.GetAttackAction().DoAttack();
-                    }else if (HexGrid.Instance.CurrentPathExists && CurrentCell.unitFeature == null)
-                    {
-                        temp.GetMoveAction().DoMove();
+                        if (temp.canAttack && CurrentCell.unitFeature != null && CurrentCell.unitFeature != selectedFeature
+                            && UnitActionSystem.Instance.CanAttack(temp, CurrentCell))
+                        {
+                            temp.GetAttackAction().DoAttack();
+                        }
+                        else if (temp.canMove && HexGrid.Instance.CurrentPathExists && CurrentCell.unitFeature == null)
+                        {
+                            temp.GetMoveAction().DoMove();
+                        }
                     }
-                }
-                else if (CurrentCellChanged)
-                {
-                    UnitActionSystem.Instance.DoPathfinding(temp, CurrentCell);
+                    else if (CurrentCellChanged && temp.canMove && CurrentCell.unitFeature == null)
+                    {
+                        UnitActionSystem.Instance.DoPathfinding(temp, CurrentCell);
+                    }
                 }
             }
         }
@@ -159,5 +163,41 @@ public class Player : MonoBehaviour
     {
         curMana -= cost;
         manaSystemUI.UpdateManaText();
+    }
+    protected HexCell FindNearestEnemyCell(HexCoordinates curUnitCoord)
+    {
+        List<HexUnit> enemyUnits;
+        List<Base> enemyBases;
+        HexCell res = null;
+        if (GameManager.Instance.currentPlayer == GameManager.Instance.player1)
+        {
+            enemyUnits = GameManager.Instance.player2.myUnits;
+            enemyBases = GameManager.Instance.player2.myBases;
+        }
+        else
+        {
+            enemyUnits = GameManager.Instance.player1.myUnits;
+            enemyBases = GameManager.Instance.player1.myBases;
+        }
+        int minDistance = Int32.MaxValue;
+        foreach(var enemyUnit in enemyUnits)
+        {
+            int curDistance = enemyUnit.location.Coordinates.DistanceTo(curUnitCoord);
+            if (curDistance < minDistance)
+            {
+                minDistance = curDistance;
+                res = enemyUnit.location;
+            }
+        }
+        foreach (var enemyBase in enemyBases)
+        {
+            int curDistance = enemyBase.location.Coordinates.DistanceTo(curUnitCoord);
+            if (curDistance < minDistance)
+            {
+                minDistance = curDistance;
+                res = enemyBase.location;
+            }
+        }
+        return res;
     }
 }

@@ -23,6 +23,8 @@ public class TurnManager : MonoBehaviour
 	}
 	public void NextTurn()
 	{
+		HexGrid.Instance.BlockActions = true;
+		GameUIHandler.Instance.disableCanvasGroupRayCast();
 		turnNumber++;
 		isPlayer1Turn = !isPlayer1Turn;
 		OnTurnChanged?.Invoke(this, EventArgs.Empty);

@@ -504,6 +504,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Character_Soldier_01_Black
       objectReference: {fileID: 0}
+    - target: {fileID: 183274, guid: a6ebdfa58063c6e40a19612fc9013404, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 425282, guid: a6ebdfa58063c6e40a19612fc9013404, type: 3}
       propertyPath: m_RootOrder
       value: 0

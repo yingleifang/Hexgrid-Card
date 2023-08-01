@@ -9,4 +9,5 @@ public class BaseAction : MonoBehaviour
     {
         unit = GetComponent<HexUnit>();
     }
+
 }

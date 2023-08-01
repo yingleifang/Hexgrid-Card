@@ -3,12 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class UnitFeature : Feature
+public class UnitFeature : Feature
 {
-	public int UnitCurHealth { get; private set; } = 10;
-	public int UnitTotalHealth { get; private set; } = 10;
+	public int UnitCurHealth { get; protected set; } = 10;
+	public int UnitTotalHealth { get; protected set; } = 10;
 
 	public event EventHandler OnDamaged;
+
+	public bool canMove { get; private set; } = true;
+	public bool canAttack { get; private set; } = true;
 	public override HexCell Location
 	{
 		get => location;
@@ -25,21 +28,11 @@ public abstract class UnitFeature : Feature
 		}
 	}
 
-	public void TakeDamage(int damage)
+	public virtual void TakeDamage(int damage)
     {
 		UnitCurHealth -= damage;
 		OnDamaged?.Invoke(this, EventArgs.Empty);
-		if (this is HexUnit temp)
-        {
-			if (temp.UnitCurHealth <= 0){
-                StartCoroutine(temp.GetAttackAction().Death());
-            }
-            else
-            {
-				temp.GetAttackAction().PlayGetHitAnim();
-			}
-		}
-
+		GetHitVisual();
 	}
     protected virtual void GetHitVisual()
     {
@@ -48,5 +41,11 @@ public abstract class UnitFeature : Feature
 	public float GetHealthNormalized()
 	{
 		return (float)UnitCurHealth / UnitTotalHealth;
+	}
+
+	public void DisableUnit()
+    {
+		canMove = false;
+		canAttack = false;
 	}
 }

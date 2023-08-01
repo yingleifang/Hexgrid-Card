@@ -31,12 +31,12 @@ public class UnitAnimation : MonoBehaviour
 
     void UnitAnimation_StartMoving(object sender, EventArgs empty)
     {
-        HexGrid.Instance.unitIsBusy = true;
+        HexGrid.Instance.BlockActions = true;
         unitAnimator.SetBool("isRunning", true);
     }
     void UnitAnimation_StopMoving(object sender, EventArgs empty)
     {
         unitAnimator.SetBool("isRunning", false);
-        HexGrid.Instance.unitIsBusy = false;
+        HexGrid.Instance.BlockActions = false;
     }
 }

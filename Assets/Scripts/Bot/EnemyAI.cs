@@ -3,29 +3,148 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyAI : MonoBehaviour
+public class EnemyAI : Player
 {
-    float timer;
+    int aggressiveRange = 20;
+
+    [SerializeField]
+    int maxUnits = 5;
+    enum State
+    {
+        WaitingForEnemyTurn,
+        TakingTurn,
+        Busy,
+    }
+
+    public override void TakeAction()
+    {
+        StartCoroutine(EnemyMovement());
+        HexGrid.Instance.BlockActions = true;
+    }
+
+    IEnumerator EnemyMovement()
+    {
+        foreach (var curUnit in myUnits)
+        {
+            HexCell targetCell = FindNearestEnemyCell(curUnit.location.Coordinates);
+            if (targetCell is null)
+            {
+                Debug.Log("No valid targetCell to move to");
+            }
+            else
+            {
+                UnitFeature tempCopy = targetCell.unitFeature;
+                targetCell.unitFeature = null;
+                HexGrid.Instance.FindPath(curUnit.Location, targetCell, curUnit, aggressiveRange);
+                targetCell.unitFeature = tempCopy;
+                if (HexGrid.Instance.HasPath)
+                {
+                    if (HexGrid.Instance.GetPath(curUnit.MovementRange))
+                    {
+                        targetCell.unitFeature = tempCopy;
+                        if (HexGrid.Instance.curPath.Count == 1)
+                        {
+                            yield return StartCoroutine(curUnit.GetAttackAction().Hitting(targetCell.unitFeature));
+                        }
+                        else
+                        {
+                            curUnit.location.unitFeature = null;
+                            curUnit.location = HexGrid.Instance.curPath[^1];
+                            curUnit.location.unitFeature = curUnit;
+                            yield return StartCoroutine(curUnit.GetMoveAction().TravelPath());
+                        }
+                    }
+                }
+            }
+
+        }
+        TurnManager.Instance.NextTurn();
+    }
+
+    //State state;
+    //float timer;
+    //private void Awake()
+    //{
+    //    state = State.WaitingForEnemyTurn;
+    //}
 
     private void Start()
     {
         TurnManager.Instance.OnTurnChanged += EnemyAI_OnTurnChanged;
     }
-    private void Update()
+    //private void Update()
+    //{
+    //    if (TurnManager.Instance.isPlayer1Turn)
+    //    {
+    //        return;
+    //    }
+    //    switch (state)
+    //    {
+    //        case State.WaitingForEnemyTurn:
+    //            break;
+    //        case State.TakingTurn:
+    //            timer -= Time.deltaTime;
+    //            if (timer <= 0f)
+    //            {
+    //                if (TryTakeEnemyAIAction(SetStateTakingTurn))
+    //                {
+    //                    state = State.Busy;
+    //                }
+    //                else
+    //                {
+    //                    TurnManager.Instance.NextTurn();
+    //                }
+    //            }
+    //            break;
+    //        case State.Busy:
+    //            break;
+    //    }
+    //}
+
+    //private void SetStateTakingTurn()
+    //{
+    //    timer = 0.5f;
+    //    state = State.TakingTurn;
+    //}
+    private void EnemyAI_OnTurnChanged(object sender, EventArgs e)
     {
-        if (TurnManager.Instance.isPlayer1Turn)
+        if (myUnits.Count < maxUnits)
         {
-            return;
-        }
-        timer -= Time.deltaTime;
-        if (timer <= 0f)
-        {
-            TurnManager.Instance.NextTurn();
+            if (!TurnManager.Instance.isPlayer1Turn)
+            {
+                foreach (var curPawnPoint in myspawnPoints)
+                {
+                    if (curPawnPoint.location.unitFeature == null)
+                    {
+                        HexGrid.Instance.AddUnit(curPawnPoint.location, curPawnPoint.orientation);
+                        break;
+                    }
+                }
+            }
         }
     }
 
-    private void EnemyAI_OnTurnChanged(object sender, EventArgs e)
+    private bool TryTakeEnemyAIAction(Action onEnemyAIActionComplete)
     {
-        timer = 2f;
+        foreach (HexUnit unit in GameManager.Instance.player2.myUnits)
+        {
+            if (TakeEnemyAIAction(unit, onEnemyAIActionComplete))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool TakeEnemyAIAction(HexUnit unit, Action onEnemyAIActionComplete)
+    {
+        Debug.Log("Enemy AI tak action");
+        StartCoroutine(enemyTest());
+        return true;
+    }
+
+    IEnumerator enemyTest()
+    {
+        yield return new WaitForSeconds(0.5f);
     }
 }

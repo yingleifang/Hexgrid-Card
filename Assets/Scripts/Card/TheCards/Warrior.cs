@@ -12,6 +12,13 @@ public class Warrior : UnitCard
 
     public override void UseEffect(UseEffectArgs useEffectArgs)
     {
-        HexGrid.Instance.AddUnit(useEffectArgs.feature.Location, useEffectArgs.feature.Orientation).AttackRange = attackRange;
+        if (useEffectArgs.feature is SpawnPoint temp)
+        {
+            HexGrid.Instance.AddUnit(temp.Location, temp.Orientation).AttackRange = attackRange;
+        }
+        else
+        {
+            Debug.LogError("Trying to spawn unit outside of spawnpoint");
+        }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System;
 
 /// <summary>
 /// Component representing a unit that occupies a cell of the hex map.
@@ -21,10 +22,12 @@ public class HexUnit : UnitFeature
 
 	public HexCell currentTravelLocation;
 
+	public event EventHandler OnUnitDamaged;
+
 	/// <summary>
 	/// Speed of the unit, in cells per turn.
 	/// </summary>
-	public int Speed => 24;
+	public int MovementRange => 3;
 
 	public int AttackRange = 0;
 
@@ -59,19 +62,20 @@ public class HexUnit : UnitFeature
 		if (edgeType == HexEdgeType.Cliff) {
 			return -1;
 		}
-		int moveCost;
-		if (fromCell.HasRoadThroughEdge(direction)) {
-			moveCost = 1;
-		}
-		else if (fromCell.Walled != toCell.Walled) {
+		//int moveCost;
+		//if (fromCell.HasRoadThroughEdge(direction)) {
+		//	moveCost = 1;
+		//}
+		if (fromCell.Walled != toCell.Walled) {
 			return -1;
 		}
-		else {
-			moveCost = edgeType == HexEdgeType.Flat ? 5 : 10;
-			moveCost +=
-				toCell.UrbanLevel + toCell.FarmLevel + toCell.PlantLevel;
-		}
-		return moveCost;
+		return 1;
+		//else {
+		//	moveCost = edgeType == HexEdgeType.Flat ? 5 : 10;
+		//	moveCost +=
+		//		toCell.UrbanLevel + toCell.FarmLevel + toCell.PlantLevel;
+		//}
+		//return moveCost;
 	}
 
 	/// <summary>
@@ -102,6 +106,21 @@ public class HexUnit : UnitFeature
 	public AttackAction GetAttackAction()
 	{
 		return attackAction;
+	}
+	public override void TakeDamage(int damage)
+	{
+		base.TakeDamage(damage);
+			if (UnitCurHealth <= 0)
+			{
+				StartCoroutine(GetAttackAction().Death());
+				DisableUnit();
+				myPlayer.myUnits.Remove(this);
+			}
+			else
+			{
+				GetAttackAction().PlayGetHitAnim();
+			}
+		GetHitVisual();
 	}
 
 	//	void OnDrawGizmos () {

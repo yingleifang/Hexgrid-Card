@@ -22,7 +22,7 @@ public class UnitActionSystem : MonoBehaviour
 	{
 		if (toCell && seletedUnit.IsValidDestination(toCell))
 		{
-			HexGrid.Instance.FindPath(seletedUnit.Location, toCell, seletedUnit);
+			HexGrid.Instance.FindPath(seletedUnit.Location, toCell, seletedUnit, seletedUnit.MovementRange);
 		}
 		else
 		{

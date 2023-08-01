@@ -114,7 +114,7 @@ public class HexMapEditor : MonoBehaviour
 				}
 				else
 				{
-					CreateUnitFeature(HexGrid.Instance.basePrefab);
+					CreateUnitFeature(HexGrid.Instance.player1BasePrefab);
 				}
 				return;
 			}

@@ -16,12 +16,12 @@ public class AttackAction : BaseAction
     }
     public void DoAttack()
     {
-        target = unit.myPlayer.CurrentCell.unitFeature;
-        StartCoroutine(Hitting());
+        StartCoroutine(Hitting(unit.myPlayer.CurrentCell.unitFeature));
     }
 
-    IEnumerator Hitting()
+    public IEnumerator Hitting(UnitFeature target)
     {
+        this.target = target;
         yield return unit.GetLookAtAction().LookAt(target.location.Position);
         unitAnimation.UnitAnimation_Attack();
         yield return new WaitForSeconds(HitDealy);

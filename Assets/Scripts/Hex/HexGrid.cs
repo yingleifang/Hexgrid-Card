@@ -15,13 +15,16 @@ public class HexGrid : MonoBehaviour
 	public List<Base> Bases = new List<Base>();
 	public List<SpawnPoint> spawnPoints = new List<SpawnPoint>();
 	
-	public bool unitIsBusy = false;
+	public bool BlockActions = false;
 
 	[SerializeField]
 	public HexUnit unitPrefab;
 
 	[SerializeField]
-	public Base basePrefab;
+	public Base player1BasePrefab;
+
+	[SerializeField]
+	public Base player2BasePrefab;
 
 	[SerializeField]
 	public SpawnPoint spawnpointPrefab;
@@ -58,6 +61,8 @@ public class HexGrid : MonoBehaviour
 	public HexCell currentPathFrom, currentPathTo;
 
 	public List<HexCell> curPath;
+
+	public Player localPlayer;
 
 	/// <summary>
 	/// Whether there currently exists a path that should be displayed.
@@ -124,7 +129,7 @@ public class HexGrid : MonoBehaviour
 		unit.Orientation = orientation;
 		location.unitFeature = unit;
 		units.Add(unit);
-		GameManager.Instance.currentPlayer.playerUnit.Add(unit);
+		GameManager.Instance.currentPlayer.myUnits.Add(unit);
 		unit.myPlayer = GameManager.Instance.currentPlayer;
 		return unit;
 	}
@@ -395,10 +400,10 @@ public class HexGrid : MonoBehaviour
 	/// </summary>
 	/// <param name="reader"><see cref="BinaryReader"/> to use.</param>
 	/// <param name="header">Header version.</param>
-	public void Load (BinaryReader reader, int header)
+	public List<HexCoordinates> Load (BinaryReader reader, int header)
 	{
-		//ClearPath();
 		ClearUnits();
+		List<HexCoordinates> baseCoordinates = new();
 		int x = 20, z = 15;
 		if (header >= 1)
 		{
@@ -409,7 +414,7 @@ public class HexGrid : MonoBehaviour
 		{
 			if (!CreateMap(x, z))
 			{
-				return;
+				return null;
 			}
 		}
 
@@ -429,7 +434,8 @@ public class HexGrid : MonoBehaviour
 				int baseCount = reader.ReadInt32();
 				for (int i = 0; i < baseCount; i++)
 				{
-					Feature.Load(reader, this, basePrefab);
+					baseCoordinates.Add(HexCoordinates.Load(reader));
+					reader.ReadSingle();
 				}
 			}
             catch
@@ -449,13 +455,14 @@ public class HexGrid : MonoBehaviour
 				Debug.Log("Problem loading spawnPoint");
 			}
 		}
+		return baseCoordinates;
 	}
 
 	/// <summary>
 	/// Get a list of cells representing the currently visible path.
 	/// </summary>
 	/// <returns>The current path list, if a visible path exists.</returns>
-	public bool GetPath ()
+	public bool GetPath (int pathLimit = 100)
 	{
 		if (!CurrentPathExists)
 		{
@@ -463,18 +470,25 @@ public class HexGrid : MonoBehaviour
 		}
 		curPath = ListPool<HexCell>.Get();
 		int loopTimes = 0;
-		for (HexCell c = currentPathTo; c != currentPathFrom && loopTimes < 300; c = c.PathFrom)
+		for (HexCell c = currentPathTo; c != currentPathFrom && loopTimes < 200; c = c.PathFrom)
 		{
 			curPath.Add(c);
 			loopTimes += 1;
-			if (loopTimes > 200)
-            {
-				Debug.Log("GetPath Bug");
-				return false;
-            }
 		}
+		if (loopTimes > 190)
+        {
+			Debug.LogError("GetPath didn't find path");
+        }
 		curPath.Add(currentPathFrom);
+		if (curPath.Count > pathLimit)
+        {
+			curPath = curPath.GetRange(curPath.Count - pathLimit - 1, pathLimit + 1);
+		}
 		curPath.Reverse();
+		if (curPath[^1].unitFeature != null)
+		{
+			curPath.RemoveAt(curPath.Count - 1);
+		}
 		return true;
 	}
 
@@ -501,18 +515,20 @@ public class HexGrid : MonoBehaviour
 	/// <param name="fromCell">Cell to start the search from.</param>
 	/// <param name="toCell">Cell to find a path towards.</param>
 	/// <param name="unit">Unit for which the path is.</param>
-	public void FindPath (HexCell fromCell, HexCell toCell, HexUnit unit)
+	public void FindPath (HexCell fromCell, HexCell toCell, HexUnit unit, int movementRange)
 	{
 		ClearCellColor(Color.blue); ;
 		currentPathFrom = fromCell;
 		currentPathTo = toCell;
-		CurrentPathExists = Search(fromCell, toCell, unit);
-		ShowPath();
+		CurrentPathExists = Search(fromCell, toCell, unit, movementRange);
+		if (GameManager.Instance.currentPlayer == localPlayer)
+		{
+			ShowPath();
+		}
 	}
 
-	bool Search (HexCell fromCell, HexCell toCell, HexUnit unit)
+	bool Search (HexCell fromCell, HexCell toCell, HexUnit unit, int movementRange)
 	{
-		int speed = unit.Speed;
 		searchFrontierPhase += 2;
 		if (searchFrontier == null)
 		{
@@ -536,7 +552,7 @@ public class HexGrid : MonoBehaviour
 				return true;
 			}
 
-			int currentTurn = (current.Distance - 1) / speed;
+			int currentTurn = (current.Distance - 1) / movementRange;
 
 			for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
 			{
@@ -558,10 +574,10 @@ public class HexGrid : MonoBehaviour
 				}
 
 				int distance = current.Distance + moveCost;
-				int turn = (distance - 1) / speed;
+				int turn = (distance - 1) / movementRange;
 				if (turn > currentTurn)
 				{
-					distance = turn * speed + moveCost;
+					distance = turn * movementRange + moveCost;
 				}
 
 				if (neighbor.SearchPhase < searchFrontierPhase && turn <= currentTurn)
@@ -573,13 +589,13 @@ public class HexGrid : MonoBehaviour
 						neighbor.Coordinates.DistanceTo(toCell.Coordinates);
 					searchFrontier.Enqueue(neighbor);
 				}
-				else if (distance < neighbor.Distance)
-				{
-					int oldPriority = neighbor.SearchPriority;
-					neighbor.Distance = distance;
-					neighbor.PathFrom = current;
-					searchFrontier.Change(neighbor, oldPriority);
-				}
+				//else if (distance < neighbor.Distance)
+				//{
+				//	int oldPriority = neighbor.SearchPriority;
+				//	neighbor.Distance = distance;
+				//	neighbor.PathFrom = current;
+				//	searchFrontier.Change(neighbor, oldPriority);
+				//}
 			}
 		}
 		return false;
@@ -604,7 +620,7 @@ public class HexGrid : MonoBehaviour
 	public void showMoveRange(HexCell fromCell, HexUnit unit)
 	{
 		ClearCellColor(Color.white);
-		int speed = unit.Speed;
+		int speed = unit.MovementRange;
 		searchFrontierPhase += 2;
 		if (searchFrontier == null)
 		{
@@ -654,13 +670,13 @@ public class HexGrid : MonoBehaviour
 					neighbor.PathFrom = current;
 					searchFrontier.Enqueue(neighbor);
 				}
-				else if (distance < neighbor.Distance)
-				{
-					int oldPriority = neighbor.SearchPriority;
-					neighbor.Distance = distance;
-					neighbor.PathFrom = current;
-					searchFrontier.Change(neighbor, oldPriority);
-				}
+				//else if (distance < neighbor.Distance)
+				//{
+				//	int oldPriority = neighbor.SearchPriority;
+				//	neighbor.Distance = distance;
+				//	neighbor.PathFrom = current;
+				//	searchFrontier.Change(neighbor, oldPriority);
+				//}
 				ColorCells(Color.white, current);
 			}
 		}
