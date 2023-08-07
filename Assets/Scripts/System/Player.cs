@@ -67,11 +67,11 @@ public class Player : MonoBehaviour
             else if(selectedFeature is HexUnit temp)
             {
                 UpdateCurrentCell();
-                if (CurrentCell)
+                if (CurrentCell && selectedFeature.myPlayer == this)
                 {
                     if (Input.GetMouseButtonDown(1))
                     {
-                        if (temp.canAttack && CurrentCell.unitFeature != null && CurrentCell.unitFeature != selectedFeature
+                        if (temp.canAttack && CurrentCell.unitFeature != null && CurrentCell.unitFeature.myPlayer != this
                             && UnitActionSystem.Instance.CanAttack(temp, CurrentCell))
                         {
                             temp.GetAttackAction().DoAttack();
@@ -148,6 +148,10 @@ public class Player : MonoBehaviour
     (bool, Feature) Player_WarriorCardCheck(int cost)
     {
         if (selectedFeature is not SpawnPoint || selectedFeature.location.unitFeature != null)
+        {
+            return (false, null);
+        }
+        if (selectedFeature.myPlayer != this)
         {
             return (false, null);
         }

@@ -11,7 +11,6 @@ public class HexUnit : UnitFeature
 {
 
 	MoveAction moveAction;
-	LookAtAction lookAtAction;
 	AttackAction attackAction;
 
 	public float rotationSpeed = 180f;
@@ -34,7 +33,6 @@ public class HexUnit : UnitFeature
 	void Awake()
 	{
 		moveAction = GetComponent<MoveAction>();
-		lookAtAction = GetComponent<LookAtAction>();
 		attackAction = GetComponent<AttackAction>();
 	}
 
@@ -98,10 +96,6 @@ public class HexUnit : UnitFeature
 	{
 		return moveAction;
 	}
-	public LookAtAction GetLookAtAction()
-	{
-		return lookAtAction;
-	}
 
 	public AttackAction GetAttackAction()
 	{
@@ -121,6 +115,33 @@ public class HexUnit : UnitFeature
 				GetAttackAction().PlayGetHitAnim();
 			}
 		GetHitVisual();
+	}
+
+	public IEnumerator LookAt(Vector3 point)
+	{
+		point.y = transform.localPosition.y;
+		Quaternion fromRotation = transform.localRotation;
+		Quaternion toRotation =
+			Quaternion.LookRotation(point - transform.localPosition);
+		float angle = Quaternion.Angle(fromRotation, toRotation);
+
+		if (angle > 0f)
+		{
+			float speed = rotationSpeed / angle;
+			for (
+				float t = Time.deltaTime * speed;
+				t < 1f;
+				t += Time.deltaTime * speed
+			)
+			{
+				transform.localRotation =
+					Quaternion.Slerp(fromRotation, toRotation, t);
+				yield return null;
+			}
+		}
+
+		transform.LookAt(point);
+		orientation = transform.localRotation.eulerAngles.y;
 	}
 
 	//	void OnDrawGizmos () {

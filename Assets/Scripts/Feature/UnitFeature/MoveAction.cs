@@ -23,14 +23,14 @@ public class MoveAction : BaseAction
 		unit.location = HexGrid.Instance.curPath[^1];
 		unit.location.unitFeature = unit;
 		StopAllCoroutines();
-		StartCoroutine(TravelPath());
+		StartBlockingCoroutine(TravelPath());
 	}
 
 	public IEnumerator TravelPath()
 	{
 		StartMoving?.Invoke(this, EventArgs.Empty);
 		Vector3 a, b, c = HexGrid.Instance.curPath[0].Position;
-		yield return unit.GetLookAtAction().LookAt(HexGrid.Instance.curPath[1].Position);
+		yield return unit.LookAt(HexGrid.Instance.curPath[1].Position);
 
 		if (!unit.currentTravelLocation)
 		{

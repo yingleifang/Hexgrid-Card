@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyAI : Player
@@ -112,12 +111,20 @@ public class EnemyAI : Player
         {
             if (!TurnManager.Instance.isPlayer1Turn)
             {
-                foreach (var curPawnPoint in myspawnPoints)
+                int baseNum = UnityEngine.Random.Range(0, myspawnPoints.Count);
+                if (myspawnPoints[baseNum].location.unitFeature == null)
                 {
-                    if (curPawnPoint.location.unitFeature == null)
+                    HexGrid.Instance.AddUnit(myspawnPoints[baseNum].location, myspawnPoints[baseNum].orientation);
+                }
+                else
+                {
+                    foreach (var curPawnPoint in myspawnPoints)
                     {
-                        HexGrid.Instance.AddUnit(curPawnPoint.location, curPawnPoint.orientation);
-                        break;
+                    if (curPawnPoint.location.unitFeature == null)
+                        {
+                            HexGrid.Instance.AddUnit(curPawnPoint.location, curPawnPoint.orientation);
+                            break;
+                        }
                     }
                 }
             }
@@ -138,7 +145,6 @@ public class EnemyAI : Player
 
     bool TakeEnemyAIAction(HexUnit unit, Action onEnemyAIActionComplete)
     {
-        Debug.Log("Enemy AI tak action");
         StartCoroutine(enemyTest());
         return true;
     }

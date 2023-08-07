@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class UnitWorldUI : MonoBehaviour
 {
     [SerializeField] Image healthBarImage;
-    [SerializeField] HexUnit myUnit;
+    [SerializeField] UnitFeature myUnit;
 
     private void Awake()
     {
