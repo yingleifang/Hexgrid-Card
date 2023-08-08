@@ -9,9 +9,6 @@ public class UnitFeature : Feature
 	public int UnitTotalHealth { get; protected set; } = 10;
 
 	public event EventHandler OnDamaged;
-
-	public bool canMove { get; private set; } = true;
-	public bool canAttack { get; private set; } = true;
 	public override HexCell Location
 	{
 		get => location;
@@ -41,11 +38,5 @@ public class UnitFeature : Feature
 	public float GetHealthNormalized()
 	{
 		return (float)UnitCurHealth / UnitTotalHealth;
-	}
-
-	public void DisableUnit()
-    {
-		canMove = false;
-		canAttack = false;
 	}
 }

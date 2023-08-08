@@ -9,4 +9,16 @@ public class Sword : WeaponCard
     {
         cardType = CardType.MeleeWeapon;
     }
+
+    public override void UseEffect(UseEffectArgs useEffectArgs)
+    {
+        //if (useEffectArgs.feature is SpawnPoint temp)
+        //{
+        //    HexGrid.Instance.AddUnit(temp.Location, temp.Orientation).AttackRange = attackRange;
+        //}
+        //else
+        //{
+        //    Debug.LogError("Trying to spawn unit outside of spawnpoint");
+        //}
+    }
 }

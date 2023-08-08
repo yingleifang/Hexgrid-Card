@@ -29,12 +29,19 @@ public class HexUnit : UnitFeature
 	public int MovementRange => 3;
 
 	public int AttackRange = 0;
-
+	public bool canMove = true;
+	public bool canAttack = true;
 	void Awake()
 	{
 		moveAction = GetComponent<MoveAction>();
 		attackAction = GetComponent<AttackAction>();
 	}
+
+	public void reFillActions()
+    {
+		canMove = true;
+		canAttack = true;
+    }
 
 	/// <summary>
 	/// Checl whether a cell is a valid destination for the unit.
@@ -142,6 +149,11 @@ public class HexUnit : UnitFeature
 
 		transform.LookAt(point);
 		orientation = transform.localRotation.eulerAngles.y;
+	}
+	public void DisableUnit()
+	{
+		canMove = false;
+		canAttack = false;
 	}
 
 	//	void OnDrawGizmos () {

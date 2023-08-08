@@ -16,6 +16,7 @@ public class AttackAction : BaseAction
     }
     public void DoAttack()
     {
+        unit.canAttack = false;
         StartBlockingCoroutine(Hitting(unit.myPlayer.CurrentCell.unitFeature));
     }
 

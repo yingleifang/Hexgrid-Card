@@ -89,6 +89,7 @@ public class MoveAction : BaseAction
 	{
 		if (HexGrid.Instance.HasPath)
 		{
+			unit.canMove = false;
 			Travel(HexGrid.Instance.GetPath());
 			HexGrid.Instance.ClearCellColor(Color.blue);
 			HexGrid.Instance.ClearCellColor(Color.white);

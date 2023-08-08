@@ -11,8 +11,10 @@ public class Player : MonoBehaviour
     int draws = 3;
     int maxCards = 7;
     int maxUnit = 5;
+    public int startingMana = 10;
     public int curMana = 10;
-    public int maxMana = 10;
+    public int manaRegen = 10;
+    public int maxMana = 20;
     [SerializeField]
     CardDatabase cardDatabase;
     [SerializeField]
@@ -32,7 +34,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        curMana = maxMana;
+        curMana = startingMana;
         foreach(var cardDisplay in cardArea.CardDisplays)
         {
             cardDisplay.UseCardChecks += Player_WarriorCardCheck;
@@ -53,7 +55,8 @@ public class Player : MonoBehaviour
         {
             return;
         }
-        curMana = maxMana;
+        curMana += manaRegen;
+        curMana = Math.Min(curMana, maxMana);
         manaSystemUI.UpdateManaText();
     }
     public virtual void TakeAction()
@@ -114,7 +117,7 @@ public class Player : MonoBehaviour
                 selectedFeature.RaiseFeatureSelectedEvent();
             }
         }
-        if (selectedFeature is HexUnit temp)
+        if (selectedFeature is HexUnit temp && temp.canMove == true)
         {
             HexGrid.Instance.showMoveRange(temp.Location, temp);
         }

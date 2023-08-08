@@ -294,7 +294,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1398f35cd06763b468f4f31d7ef9f066, type: 2}
   - {fileID: 11400000, guid: 1398f35cd06763b468f4f31d7ef9f066, type: 2}
   curMana: 10
-  maxMana: 10
+  manaRegen: 10
+  maxMana: 20
   cardDatabase: {fileID: 263034507}
   cardArea: {fileID: 700903110454132648}
   manaSystemUI: {fileID: 1471180357}
@@ -618,6 +619,7 @@ MonoBehaviour:
   deck:
   - {fileID: 11400000, guid: 1398f35cd06763b468f4f31d7ef9f066, type: 2}
   curMana: 10
+  manaRegen: 10
   maxMana: 10
   cardDatabase: {fileID: 0}
   cardArea: {fileID: 0}
