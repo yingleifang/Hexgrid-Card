@@ -10,15 +10,14 @@ public class Sword : WeaponCard
         cardType = CardType.MeleeWeapon;
     }
 
-    public override void UseEffect(UseEffectArgs useEffectArgs)
+
+    public override bool CardSpecificChecks(Player player)
     {
-        //if (useEffectArgs.feature is SpawnPoint temp)
-        //{
-        //    HexGrid.Instance.AddUnit(temp.Location, temp.Orientation).AttackRange = attackRange;
-        //}
-        //else
-        //{
-        //    Debug.LogError("Trying to spawn unit outside of spawnpoint");
-        //}
+        if (player.selectedFeature is HexUnit temp && temp.unitType == CardType.MeleeSoldier)
+        {
+            return true;
+        }
+
+        return false;
     }
 }

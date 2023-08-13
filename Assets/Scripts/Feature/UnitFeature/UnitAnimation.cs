@@ -29,6 +29,11 @@ public class UnitAnimation : MonoBehaviour
         unitAnimator.SetTrigger("Die");
     }
 
+    public void setActiveLayer(String layer, int weight)
+    {
+        Debug.Log(layer);
+        unitAnimator.SetLayerWeight(unitAnimator.GetLayerIndex(layer), weight);
+    }
     void UnitAnimation_StartMoving(object sender, EventArgs empty)
     {
         HexGrid.Instance.BlockActions = true;

@@ -29,12 +29,13 @@ public class UnitFeature : Feature
     {
 		UnitCurHealth -= damage;
 		OnDamaged?.Invoke(this, EventArgs.Empty);
-		GetHitVisual();
+		GetHitVisual(damage);
 	}
-    protected virtual void GetHitVisual()
+    protected virtual void GetHitVisual(int damage)
     {
-		Debug.Log("Show some damage Numbers");
-    }
+		DamagePopUp.Create(transform.position, damage, false);
+
+	}
 	public float GetHealthNormalized()
 	{
 		return (float)UnitCurHealth / UnitTotalHealth;

@@ -12,12 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70338352dbd8ddb449f3746b09399c51, type: 3}
   m_Name: Sword
   m_EditorClassIdentifier: 
-  id: 0
-  cardName: 
-  cost: 0
+  id: 1
+  cardName: Sword
+  cost: 5
   cardType: 5
-  backGround: {fileID: 0}
+  backGround: {fileID: 21300000, guid: 99e1ef552f6e54ad9a384a32b0d3e2b7, type: 3}
   portrait: {fileID: 0}
-  attack: 0
+  attack: 1
   attackRange: 0
-  Description: 
+  Description: Gives 1 additional damage to Melee Unit
+  weaponPrefab: {fileID: 6125553646863560973, guid: 8be8034f18e23714693badfd7441a16f, type: 3}

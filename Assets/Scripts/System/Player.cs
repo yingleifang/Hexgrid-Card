@@ -31,13 +31,13 @@ public class Player : MonoBehaviour
     public List<SpawnPoint> myspawnPoints;
 
     bool CurrentCellChanged;
-    // Start is called before the first frame update
+
     void Start()
     {
         curMana = startingMana;
         foreach(var cardDisplay in cardArea.CardDisplays)
         {
-            cardDisplay.UseCardChecks += Player_WarriorCardCheck;
+            cardDisplay.UseCardChecks += Player_CardCheck;
             cardDisplay.OnCardUsed += ConsumeMana;
         }
         initializeBase();
@@ -148,22 +148,13 @@ public class Player : MonoBehaviour
 
     }
 
-    (bool, Feature) Player_WarriorCardCheck(int cost)
+    (bool, Player) Player_CardCheck(int cost)
     {
-        if (selectedFeature is not SpawnPoint || selectedFeature.location.unitFeature != null)
-        {
-            return (false, null);
-        }
-        if (selectedFeature.myPlayer != this)
-        {
-            return (false, null);
-        }
         if (curMana - cost >= 0)
         {
-            return (true, selectedFeature);
+            return (true, this);
         }
-
-        return (false, null);
+        return (false, this);
     }
 
     void ConsumeMana(int cost)

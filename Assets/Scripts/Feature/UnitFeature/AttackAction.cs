@@ -4,16 +4,11 @@ using UnityEngine;
 
 public class AttackAction : BaseAction
 {
-    UnitAnimation unitAnimation;
-
-    float HitDealy = 0.3f;
+    float HitDelay = 0.3f;
+    float damagedDelay = 1f;
     float DeathDelay = 2f;
 
     UnitFeature target;
-    private void Start()
-    {
-        unitAnimation = GetComponentInChildren<UnitAnimation>();
-    }
     public void DoAttack()
     {
         unit.canAttack = false;
@@ -24,9 +19,10 @@ public class AttackAction : BaseAction
     {
         this.target = target;
         yield return unit.LookAt(target.location.Position);
-        unitAnimation.UnitAnimation_Attack();
-        yield return new WaitForSeconds(HitDealy);
+        unit.unitAnimation.UnitAnimation_Attack();
+        yield return new WaitForSeconds(HitDelay);
         HitTarget();
+        yield return new WaitForSeconds(damagedDelay);
     }
 
     public void HitTarget()
@@ -36,13 +32,13 @@ public class AttackAction : BaseAction
 
     public void PlayGetHitAnim()
     {
-        unitAnimation.UnitAnimation_GetHit();
+        unit.unitAnimation.UnitAnimation_GetHit();
     }
 
     public IEnumerator Death()
     {
-        yield return new WaitForSeconds(HitDealy);
-        unitAnimation.UnitAnimation_Death();
+        yield return new WaitForSeconds(HitDelay);
+        unit.unitAnimation.UnitAnimation_Death();
         yield return new WaitForSeconds(DeathDelay);
         Destroy(gameObject);
     }

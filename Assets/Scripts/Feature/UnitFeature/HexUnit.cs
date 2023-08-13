@@ -31,12 +31,24 @@ public class HexUnit : UnitFeature
 	public int AttackRange = 0;
 	public bool canMove = true;
 	public bool canAttack = true;
+
+	public Card.CardType unitType;
+
+	public WeaponCard weaponCard;
+
+	public UnitAnimation unitAnimation;
+
+	[SerializeField]
+	public WeaponSlotManager myWeaponSlotManager;
 	void Awake()
 	{
 		moveAction = GetComponent<MoveAction>();
 		attackAction = GetComponent<AttackAction>();
 	}
-
+	private void Start()
+	{
+		unitAnimation = GetComponentInChildren<UnitAnimation>();
+	}
 	public void reFillActions()
     {
 		canMove = true;
@@ -121,7 +133,6 @@ public class HexUnit : UnitFeature
 			{
 				GetAttackAction().PlayGetHitAnim();
 			}
-		GetHitVisual();
 	}
 
 	public IEnumerator LookAt(Vector3 point)
@@ -155,6 +166,11 @@ public class HexUnit : UnitFeature
 		canMove = false;
 		canAttack = false;
 	}
+
+	public void EquipWeapon()
+    {
+
+    }
 
 	//	void OnDrawGizmos () {
 	//		if (pathToTravel == null || pathToTravel.Count == 0) {

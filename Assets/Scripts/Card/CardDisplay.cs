@@ -18,7 +18,7 @@ public class CardDisplay : MonoBehaviour
 
     public Card card;
 
-    public event Func<int, (bool, Feature)> UseCardChecks;
+    public event Func<int, (bool, Player)> UseCardChecks;
 
     public event Action<int> OnCardUsed;
 
@@ -32,15 +32,13 @@ public class CardDisplay : MonoBehaviour
 
     Material myMaterial;
 
-    Card.UseEffectArgs useEffectArgs;
-
     private void Awake()
     {
         myMaterial = new Material(material);
         portraitImage.material = myMaterial;
         backGroundImage.material = myMaterial;
-        useEffectArgs = new Card.UseEffectArgs();
     }
+
     public void SetCardInfo(Card card)
     {
         this.card = card;
@@ -71,19 +69,21 @@ public class CardDisplay : MonoBehaviour
         {
             return;
         }
-        if (card is UnitCard unitCard)
-        {
+
             var result = UseCardChecks?.Invoke(card.cost);
             if (result.HasValue)
             {
-                if (result.Value.Item1) //Card is Used
+                if (result.Value.Item1) //Card can be Used
                 {
+                if (!card.CardSpecificChecks(result.Value.Item2))
+                {
+                    return;
+                }
                     CardUsed = true;
                     OnCardUsed?.Invoke(card.cost);
                     StartCoroutine(StartDissolving());
                     StartCoroutine(StartFading());
-                    useEffectArgs.feature = result.Value.Item2;
-                    unitCard.UseEffect(useEffectArgs);
+                    card.UseEffect(result.Value.Item2);
                 }
                 else
                 {
@@ -94,7 +94,6 @@ public class CardDisplay : MonoBehaviour
             {
                 Debug.LogError("CardUsed Invoke returned Null");
             }
-        }
     }
 
     IEnumerator StartDissolving()
