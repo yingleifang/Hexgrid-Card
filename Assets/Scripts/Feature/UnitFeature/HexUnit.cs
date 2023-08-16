@@ -15,20 +15,19 @@ public class HexUnit : UnitFeature
 
 	public float rotationSpeed = 180f;
 	public float travelSpeed = 4f;
-	public int attackDamage = 3;
+	[SerializeField]
+	int attackDamage = 3;
+	[SerializeField]
+	int AttackRange = 0;
 
 	public static HexUnit unitPrefab;
 
 	public HexCell currentTravelLocation;
 
-	public event EventHandler OnUnitDamaged;
-
 	/// <summary>
 	/// Speed of the unit, in cells per turn.
 	/// </summary>
 	public int MovementRange => 3;
-
-	public int AttackRange = 0;
 	public bool canMove = true;
 	public bool canAttack = true;
 
@@ -166,11 +165,26 @@ public class HexUnit : UnitFeature
 		canMove = false;
 		canAttack = false;
 	}
-
-	public void EquipWeapon()
+	
+	public int GetUnitDamage()
     {
-
+		int totalDamage = attackDamage;
+		if (weaponCard)
+        {
+			totalDamage += weaponCard.attack;
+		}
+		return totalDamage;
     }
+
+	public int GetUnitAttackRange()
+	{
+		int totalDamage = attackDamage;
+		if (weaponCard)
+		{
+			totalDamage += weaponCard.attackRange;
+		}
+		return totalDamage;
+	}
 
 	//	void OnDrawGizmos () {
 	//		if (pathToTravel == null || pathToTravel.Count == 0) {

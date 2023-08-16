@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class UnitFeature : Feature
 {
-	public int UnitCurHealth { get; protected set; } = 10;
-	public int UnitTotalHealth { get; protected set; } = 10;
+	public int UnitCurHealth { get; protected set; } = 99;
+	public int UnitTotalHealth { get; protected set; } = 99;
 
 	public event EventHandler OnDamaged;
 	public override HexCell Location

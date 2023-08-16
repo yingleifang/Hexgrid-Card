@@ -297,7 +297,6 @@ MonoBehaviour:
   curMana: 10
   manaRegen: 10
   maxMana: 20
-  cardDatabase: {fileID: 263034507}
   cardArea: {fileID: 700903110454132648}
   manaSystemUI: {fileID: 1471180357}
   selectedFeature: {fileID: 0}
@@ -413,6 +412,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 1398f35cd06763b468f4f31d7ef9f066, type: 2}
   weaponCardList:
   - {fileID: 11400000, guid: f7d833d940525f3499d8b15341cd7d3e, type: 2}
+  - {fileID: 11400000, guid: 30313863138d8cb4c9623b9009592079, type: 2}
   specialEffectCardList:
   - {fileID: 11400000, guid: 5a13ad54ef2e7864f93022a3b05cc771, type: 2}
 --- !u!4 &263034508
@@ -623,7 +623,6 @@ MonoBehaviour:
   curMana: 10
   manaRegen: 10
   maxMana: 10
-  cardDatabase: {fileID: 0}
   cardArea: {fileID: 0}
   manaSystemUI: {fileID: 0}
   selectedFeature: {fileID: 0}
@@ -713,6 +712,10 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 2937378142448860884, guid: b43a3456866c5794b98c140634fc851a, type: 3}
+      propertyPath: cardDatabase
+      value: 
+      objectReference: {fileID: 263034507}
     - target: {fileID: 2937378142448860884, guid: b43a3456866c5794b98c140634fc851a, type: 3}
       propertyPath: CardDisplays.Array.data[0]
       value: 
@@ -1583,7 +1586,7 @@ GameObject:
   - component: {fileID: 2052057436}
   m_Layer: 3
   m_Name: UICamera
-  m_TagString: Untagged
+  m_TagString: UICamera
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

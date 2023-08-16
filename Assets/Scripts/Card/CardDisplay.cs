@@ -12,8 +12,6 @@ public class CardDisplay : MonoBehaviour
     public Image portraitImage;
     public Image backGroundImage;
 
-    public bool Occupied;
-
     public TextMeshProUGUI Description;
 
     public Card card;
@@ -22,7 +20,7 @@ public class CardDisplay : MonoBehaviour
 
     public event Action<int> OnCardUsed;
 
-    public bool CardUsed = false;
+    public bool CardUsed = true;
 
     [SerializeField] CanvasGroup CardInfo;
 
@@ -37,10 +35,13 @@ public class CardDisplay : MonoBehaviour
         myMaterial = new Material(material);
         portraitImage.material = myMaterial;
         backGroundImage.material = myMaterial;
+        CardUsed = true;
     }
 
     public void SetCardInfo(Card card)
     {
+        RevertDissolving();
+        CardUsed = false;
         this.card = card;
         cardNameText.text = card.name;
         costText.text = card.cost.ToString();
@@ -59,6 +60,15 @@ public class CardDisplay : MonoBehaviour
         while (transform.localPosition.y <= -1)
         {
             transform.localPosition += moveSpeed * Time.deltaTime * new Vector3(0, 1, 0);
+            yield return null;
+        }
+    }
+
+    public IEnumerator Hide()
+    {
+        while (transform.localPosition.y >= -205)
+        {
+            transform.localPosition -= moveSpeed * Time.deltaTime * new Vector3(0, 1, 0);
             yield return null;
         }
     }
@@ -106,6 +116,14 @@ public class CardDisplay : MonoBehaviour
             yield return null;
         }
         yield return null;
+    }
+
+    public void RevertDissolving()
+    {
+        dissolveAmount = 1;
+        portraitImage.material.SetFloat("_DissolveAmount", dissolveAmount);
+        backGroundImage.material.SetFloat("_DissolveAmount", dissolveAmount);
+        CardInfo.alpha = 1;
     }
 
     IEnumerator StartFading()

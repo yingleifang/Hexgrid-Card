@@ -66,6 +66,7 @@ MonoBehaviour:
   canAttack: 1
   unitType: 0
   weaponCard: {fileID: 0}
+  unitAnimation: {fileID: 0}
   myWeaponSlotManager: {fileID: 901424427834411114}
 --- !u!136 &1447045142054878661
 CapsuleCollider:

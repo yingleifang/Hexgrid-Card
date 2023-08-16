@@ -3,9 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class LookAtCamera : MonoBehaviour
-{    private void LateUpdate()
+{
+    Camera lookAtCamera;
+    private void Awake()
     {
-        Vector3 dirToCamra = (Camera.main.transform.position - transform.position).normalized;
-        transform.LookAt(Camera.main.transform.position + dirToCamra * -1);
+        lookAtCamera = Camera.main;
+    }
+    private void LateUpdate()
+    {
+        Vector3 dirToCamra = transform.position - Camera.main.transform.position;
+        transform.LookAt(lookAtCamera.transform.position - dirToCamra);
     }
 }

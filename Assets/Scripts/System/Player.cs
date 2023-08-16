@@ -16,8 +16,6 @@ public class Player : MonoBehaviour
     public int manaRegen = 10;
     public int maxMana = 20;
     [SerializeField]
-    CardDatabase cardDatabase;
-    [SerializeField]
     CardAreaManager cardArea;
     [SerializeField]
     ManaSystemUI manaSystemUI;
@@ -41,8 +39,7 @@ public class Player : MonoBehaviour
             cardDisplay.OnCardUsed += ConsumeMana;
         }
         initializeBase();
-        deck.AddRange(cardDatabase.Draw());
-        cardArea.FillSlots(deck);
+        cardArea.FillSlots();
         TurnManager.Instance.OnTurnChanged += Player_OnTurnChanged;
     }
 
@@ -50,14 +47,17 @@ public class Player : MonoBehaviour
     {
         if (!TurnManager.Instance.isPlayer1Turn && this == GameManager.Instance.player1)
         {
+            cardArea.HideAllCards();
             return;
         }else if (TurnManager.Instance.isPlayer1Turn && this == GameManager.Instance.player2)
         {
+            cardArea.HideAllCards();
             return;
         }
         curMana += manaRegen;
         curMana = Math.Min(curMana, maxMana);
         manaSystemUI.UpdateManaText();
+        cardArea.FillSlots();
     }
     public virtual void TakeAction()
     {

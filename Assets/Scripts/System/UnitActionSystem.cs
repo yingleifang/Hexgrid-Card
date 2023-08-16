@@ -31,7 +31,7 @@ public class UnitActionSystem : MonoBehaviour
 	}
 	public bool CanAttack(HexUnit seletedUnit, HexCell toCell)
 	{
-		if (seletedUnit.Location.Coordinates.DistanceTo(toCell.Coordinates) <= seletedUnit.AttackRange)
+		if (seletedUnit.Location.Coordinates.DistanceTo(toCell.Coordinates) <= seletedUnit.GetUnitAttackRange())
 		{
 			return true;
 		}

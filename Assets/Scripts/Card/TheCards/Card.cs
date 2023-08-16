@@ -47,7 +47,6 @@ public class Card : ScriptableObject
 
     public virtual bool CardSpecificChecks(Player player)
     {
-        Debug.Log("running checks");
         return true;
     }
 

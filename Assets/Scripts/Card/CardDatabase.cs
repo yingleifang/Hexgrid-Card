@@ -9,9 +9,20 @@ public class CardDatabase : MonoBehaviour
     [SerializeField] List<WeaponCard> weaponCardList = new();
     [SerializeField] List<SpecialEffectCard> specialEffectCardList = new();
 
-    public Card[] Draw()
+    public Card DrawRandomCard()
     {
-        return new Card[] { GetRandomUnitCard(), GetRandomWeaponCard(), GetRandomSpecialEffectCard() };
+        int cardType = Random.Range(0, 3);
+        if (cardType == 0)
+        {
+            return GetRandomUnitCard();
+        }else if (cardType == 1)
+        {
+            return GetRandomWeaponCard();
+        }
+        else
+        {
+            return GetRandomSpecialEffectCard();
+        }
     }
     public Card GetRandomUnitCard()
     {

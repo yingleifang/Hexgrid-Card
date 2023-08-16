@@ -31,7 +31,6 @@ public class UnitAnimation : MonoBehaviour
 
     public void setActiveLayer(String layer, int weight)
     {
-        Debug.Log(layer);
         unitAnimator.SetLayerWeight(unitAnimator.GetLayerIndex(layer), weight);
     }
     void UnitAnimation_StartMoving(object sender, EventArgs empty)

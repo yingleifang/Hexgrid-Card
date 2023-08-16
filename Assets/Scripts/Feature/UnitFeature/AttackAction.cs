@@ -27,7 +27,7 @@ public class AttackAction : BaseAction
 
     public void HitTarget()
     {
-        target.TakeDamage(unit.attackDamage);
+        target.TakeDamage(unit.GetUnitDamage());
     }
 
     public void PlayGetHitAnim()
