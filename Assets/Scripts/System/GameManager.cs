@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour
 
 	const int mapFileVersion = 5;
 
+	public bool deleteMode = false; 
+
 	//public event EventHandler OnSelectedUnitChanged;
 
 	[SerializeField]
@@ -160,5 +162,12 @@ public class GameManager : MonoBehaviour
 				AddSpawnPoitnsToPlayer(player2, curSpawnpoint);
 			}
 		}
+	}
+
+	public void UnsetDeleteMode()
+    {
+		var cursorHotspot = new Vector2(GameAssets.Instance.mainCursor.width / 2, GameAssets.Instance.mainCursor.height / 2);
+		GameManager.Instance.deleteMode = false;
+		Cursor.SetCursor(GameAssets.Instance.mainCursor, cursorHotspot, CursorMode.Auto);
 	}
 }

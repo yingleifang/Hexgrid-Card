@@ -30,6 +30,8 @@ public class CardDisplay : MonoBehaviour
 
     Material myMaterial;
 
+    int deleteCardCost = 1;
+
     private void Awake()
     {
         myMaterial = new Material(material);
@@ -79,10 +81,20 @@ public class CardDisplay : MonoBehaviour
         {
             return;
         }
-
-            var result = UseCardChecks?.Invoke(card.cost);
-            if (result.HasValue)
+        if (GameManager.Instance.deleteMode)
+        {
+            var res = UseCardChecks?.Invoke(deleteCardCost);
+            if (res.Value.Item1) //Card can be Used
             {
+                CardUsed = true;
+                OnCardUsed?.Invoke(deleteCardCost);
+                StartCoroutine(StartDissolving());
+                StartCoroutine(StartFading());
+                GameManager.Instance.UnsetDeleteMode();
+            }
+            return;
+        }
+            var result = UseCardChecks?.Invoke(card.cost);
                 if (result.Value.Item1) //Card can be Used
                 {
                 if (!card.CardSpecificChecks(result.Value.Item2))
@@ -99,11 +111,6 @@ public class CardDisplay : MonoBehaviour
                 {
                     Debug.Log("Card cannot be used");
                 }
-            }
-            else
-            {
-                Debug.LogError("CardUsed Invoke returned Null");
-            }
     }
 
     IEnumerator StartDissolving()

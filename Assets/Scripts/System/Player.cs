@@ -15,6 +15,7 @@ public class Player : MonoBehaviour
     public int curMana = 10;
     public int manaRegen = 10;
     public int maxMana = 20;
+    public int deleteCardCost = 1;
     [SerializeField]
     CardAreaManager cardArea;
     [SerializeField]
@@ -156,7 +157,6 @@ public class Player : MonoBehaviour
         }
         return (false, this);
     }
-
     void ConsumeMana(int cost)
     {
         curMana -= cost;

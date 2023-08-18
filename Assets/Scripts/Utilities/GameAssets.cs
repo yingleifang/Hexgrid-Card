@@ -5,6 +5,7 @@ using UnityEngine;
 public class GameAssets : MonoBehaviour
 {
     public static GameAssets Instance { get; private set; }
+	public Texture2D mainCursor;
 	private void Awake()
 	{
 		if (Instance != null)
