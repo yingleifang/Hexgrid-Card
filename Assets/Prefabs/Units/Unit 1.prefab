@@ -10,12 +10,12 @@ GameObject:
   m_Component:
   - component: {fileID: 4421854725932508}
   - component: {fileID: 114701888605048992}
-  - component: {fileID: 1447045142054878661}
   - component: {fileID: 2180410692864235518}
   - component: {fileID: 7695024114539544560}
   - component: {fileID: 265757250388779084}
   - component: {fileID: 6016733023384533529}
   - component: {fileID: 901424427834411114}
+  - component: {fileID: 229439781755252982}
   m_Layer: 0
   m_Name: Unit 1
   m_TagString: Untagged
@@ -60,37 +60,15 @@ MonoBehaviour:
   rotationSpeed: 180
   travelSpeed: 4
   attackDamage: 3
-  currentTravelLocation: {fileID: 0}
   AttackRange: 0
+  currentTravelLocation: {fileID: 0}
   canMove: 1
   canAttack: 1
   unitType: 0
   weaponCard: {fileID: 0}
   unitAnimation: {fileID: 0}
+  projectile: {fileID: 0}
   myWeaponSlotManager: {fileID: 901424427834411114}
---- !u!136 &1447045142054878661
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1716964107277084}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Height: 2.405516
-  m_Direction: 1
-  m_Center: {x: 0, y: 0.70275795, z: 0}
 --- !u!114 &2180410692864235518
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -161,6 +139,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1008c0c4d372cac499d7b8949e221e31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!136 &229439781755252982
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1716964107277084}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.5
+  m_Height: 2.375924
+  m_Direction: 1
+  m_Center: {x: -0, y: 0.6879603, z: -0}
 --- !u!1 &4815627250296054865
 GameObject:
   m_ObjectHideFlags: 0

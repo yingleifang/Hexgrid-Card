@@ -16,9 +16,10 @@ MonoBehaviour:
   cardName: Warrior
   cost: 5
   cardType: 1
-  backGround: {fileID: 0}
+  backGround: {fileID: 21300000, guid: 240cab052f25f495eabb52e3744d9f10, type: 3}
   portrait: {fileID: 21300000, guid: 8dd207ef7479646f391224ef3c0ba23d, type: 3}
   attack: 2
   attackRange: 1
   health: 6
   Speed: 20
+  baseWeapon: {fileID: 11400000, guid: d8da67d4058345844897d22dbc61b60f, type: 2}

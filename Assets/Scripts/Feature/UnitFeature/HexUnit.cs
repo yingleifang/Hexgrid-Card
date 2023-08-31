@@ -9,6 +9,7 @@ using System;
 /// </summary>
 public class HexUnit : UnitFeature
 {
+	float DeathDelay = 2f;
 
 	MoveAction moveAction;
 	AttackAction attackAction;
@@ -37,6 +38,8 @@ public class HexUnit : UnitFeature
 
 	public UnitAnimation unitAnimation;
 
+	public Projectile projectile;
+
 	[SerializeField]
 	public WeaponSlotManager myWeaponSlotManager;
 	void Awake()
@@ -48,6 +51,11 @@ public class HexUnit : UnitFeature
 	{
 		unitAnimation = GetComponentInChildren<UnitAnimation>();
 	}
+
+	public float getHitDelay()
+    {
+		return weaponCard.attackAnimationLength * 2/3;
+    }
 	public void reFillActions()
     {
 		canMove = true;
@@ -124,17 +132,23 @@ public class HexUnit : UnitFeature
 		base.TakeDamage(damage);
 			if (UnitCurHealth <= 0)
 			{
-				StartCoroutine(GetAttackAction().Death());
+				StartCoroutine(Death());
 				DisableUnit();
 				myPlayer.myUnits.Remove(this);
 			}
 			else
 			{
-				GetAttackAction().PlayGetHitAnim();
+				unitAnimation.UnitAnimation_GetHit();
 			}
 	}
+	public IEnumerator Death()
+	{
+		unitAnimation.UnitAnimation_Death();
+		yield return new WaitForSeconds(DeathDelay);
+		Destroy(gameObject);
+	}
 
-	public IEnumerator LookAt(Vector3 point)
+	public IEnumerator TurnTo(Vector3 point)
 	{
 		point.y = transform.localPosition.y;
 		Quaternion fromRotation = transform.localRotation;

@@ -25,6 +25,8 @@ public class GameManager : MonoBehaviour
 	public Player currentPlayer;
 
 	List<HexCoordinates> baseCoords;
+
+	public Vector3 curAttackingPosition;
 	private void Awake()
     {
 		if (Instance != null)

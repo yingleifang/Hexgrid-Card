@@ -18,4 +18,13 @@ public class RangedWeaponCard : WeaponCard
 
         return false;
     }
+
+    public override void UseEffect(Player player)
+    {
+        base.UseEffect(player);
+        if ((player.selectedFeature is HexUnit temp))
+        {
+            temp.projectile = weaponPrefab.GetComponentInChildren<Projectile>();
+        }
+    }
 }

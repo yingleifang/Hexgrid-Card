@@ -8,24 +8,31 @@ public class WeaponCard : Card
     public int attackRange;
     public string Description;
     public GameObject weaponPrefab;
+    public AnimatorOverrideController overrideController;
+    public float attackAnimationLength;
 
     public override void UseEffect(Player player)
     {
         if ((player.selectedFeature is HexUnit temp))
         {
-            string prevWeapon = "Base";
-            if (temp.weaponCard)
-            {
-                prevWeapon = temp.weaponCard.name;
-            }
-            temp.unitAnimation.setActiveLayer(prevWeapon, 0);
             temp.weaponCard = this;
             temp.myWeaponSlotManager.LoadWeaponOnSlot(weaponPrefab, false);
-            temp.unitAnimation.setActiveLayer(temp.weaponCard.name, 1);
+            temp.unitAnimation.unitAnimator.runtimeAnimatorController = overrideController;
+            SetattackAnimationLength();
         }
         else
         {
             Debug.LogError("Weapon cannot be used on none Hexunit feature");
         }
+    }
+
+    public void SetattackAnimationLength()
+    {
+        attackAnimationLength = overrideController.animationClips[0].length;
+    }
+
+    public virtual void WeaponVisualEffect(Vector3 position)
+    {
+
     }
 }

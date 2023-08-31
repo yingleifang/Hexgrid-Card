@@ -24,8 +24,17 @@ public class UnitFeature : Feature
 			HexGrid.Instance.MakeChildOfColumn(transform, value.ColumnIndex);
 		}
 	}
+    private void OnTriggerEnter(Collider other)
+    {
+		Debug.Log(other.transform.root.GetComponent<HexUnit>());
+		//var enemy = other.transform.root.GetComponent<HexUnit>();
+		//if (enemy)
+  //      {
+		//	TakeDamage(enemy.GetUnitDamage());
+		//}
+	}
 
-	public virtual void TakeDamage(int damage)
+    public virtual void TakeDamage(int damage)
     {
 		UnitCurHealth -= damage;
 		OnDamaged?.Invoke(this, EventArgs.Empty);

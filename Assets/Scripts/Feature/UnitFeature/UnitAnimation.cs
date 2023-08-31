@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class UnitAnimation : MonoBehaviour
 {
-    [SerializeField] Animator unitAnimator;
+    public Animator unitAnimator;
     private void Awake()
     {
         unitAnimator = FindObjectOfType<Animator>();

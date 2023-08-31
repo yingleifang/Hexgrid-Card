@@ -4,6 +4,6 @@ public class UnitCard : Card
     public int attackRange;
     public int health;
     public int Speed;
-
+    public WeaponCard baseWeapon;
 
 }

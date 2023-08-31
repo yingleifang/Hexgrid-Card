@@ -15,6 +15,8 @@ public class Warrior : UnitCard
         if (player.selectedFeature is SpawnPoint temp)
         {
             HexUnit spawnedUnit = HexGrid.Instance.AddUnit(temp.Location, temp.Orientation);
+            baseWeapon.SetattackAnimationLength();
+            spawnedUnit.weaponCard = baseWeapon;
             spawnedUnit.unitType = cardType;
         }
         else

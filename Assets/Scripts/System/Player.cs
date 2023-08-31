@@ -20,7 +20,7 @@ public class Player : MonoBehaviour
     CardAreaManager cardArea;
     [SerializeField]
     ManaSystemUI manaSystemUI;
-    public HexCell CurrentCell { get; private set; }
+    public HexCell CurrentCell { get; protected set; }
     public Feature selectedFeature;
 
     public List<HexUnit> myUnits;
@@ -39,7 +39,6 @@ public class Player : MonoBehaviour
             cardDisplay.UseCardChecks += Player_CardCheck;
             cardDisplay.OnCardUsed += ConsumeMana;
         }
-        initializeBase();
         cardArea.FillSlots();
         TurnManager.Instance.OnTurnChanged += Player_OnTurnChanged;
     }
@@ -66,11 +65,11 @@ public class Player : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
-                DoSelection();
+                DoSelection(HexGrid.Instance.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition)));
             }
             else if(selectedFeature is HexUnit temp)
             {
-                UpdateCurrentCell();
+                UpdateCurrentCell(HexGrid.Instance.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition)));
                 if (CurrentCell && selectedFeature.myPlayer == this)
                 {
                     if (Input.GetMouseButtonDown(1))
@@ -94,11 +93,11 @@ public class Player : MonoBehaviour
         }
     }
 
-    void DoSelection()
+    protected void DoSelection(HexCell cell)
     {
         HexGrid.Instance.ClearCellColor(Color.blue);
         HexGrid.Instance.ClearCellColor(Color.white);
-        UpdateCurrentCell();
+        UpdateCurrentCell(cell);
         if (CurrentCell)
         {
             if (selectedFeature)
@@ -123,10 +122,8 @@ public class Player : MonoBehaviour
             HexGrid.Instance.showMoveRange(temp.Location, temp);
         }
     }
-    void UpdateCurrentCell()
+    void UpdateCurrentCell(HexCell cell)
     {
-        HexCell cell =
-            HexGrid.Instance.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
         if (cell != CurrentCell)
         {
             CurrentCell = cell;
@@ -137,18 +134,6 @@ public class Player : MonoBehaviour
             CurrentCellChanged = false;
         }
     }
-    void showCards()
-    {
-        foreach (var card in deck)
-        {
-
-        }
-    }
-    void initializeBase()
-    {
-
-    }
-
     (bool, Player) Player_CardCheck(int cost)
     {
         if (curMana - cost >= 0)

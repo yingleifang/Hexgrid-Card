@@ -3,7 +3,11 @@ guid: 5b42d2fa46578ee4a8cfa7ae1a4c32fd
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - backGround: {instanceID: 0}
+  - portrait: {instanceID: 0}
+  - weaponPrefab: {instanceID: 0}
+  - overrideController: {fileID: 22100000, guid: c7ae047b096e2054eb90deb3419861de, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

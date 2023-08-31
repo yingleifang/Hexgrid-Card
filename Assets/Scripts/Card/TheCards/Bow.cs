@@ -20,4 +20,5 @@ public class Bow : RangedWeaponCard
 
         return false;
     }
+
 }

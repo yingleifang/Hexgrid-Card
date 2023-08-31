@@ -8,6 +8,9 @@ public class EnemyAI : Player
 
     [SerializeField]
     int maxUnits = 5;
+
+    [SerializeField]
+    CardDatabase cardDatabase;
     enum State
     {
         WaitingForEnemyTurn,
@@ -114,7 +117,8 @@ public class EnemyAI : Player
                 int baseNum = UnityEngine.Random.Range(0, myspawnPoints.Count);
                 if (myspawnPoints[baseNum].location.unitFeature == null)
                 {
-                    HexGrid.Instance.AddUnit(myspawnPoints[baseNum].location, myspawnPoints[baseNum].orientation);
+                    DoSelection(myspawnPoints[baseNum].location);
+                    cardDatabase.GetRandomUnitCard().UseEffect(this);
                 }
                 else
                 {

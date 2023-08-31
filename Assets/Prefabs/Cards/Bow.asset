@@ -22,3 +22,4 @@ MonoBehaviour:
   attackRange: 2
   Description: A bow
   weaponPrefab: {fileID: 6125553646863560973, guid: 7bb760ed15163364a9ed5bc428b01f98, type: 3}
+  overrideController: {fileID: 22100000, guid: c7ae047b096e2054eb90deb3419861de, type: 2}

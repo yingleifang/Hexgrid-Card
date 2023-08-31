@@ -30,7 +30,7 @@ public class MoveAction : BaseAction
 	{
 		StartMoving?.Invoke(this, EventArgs.Empty);
 		Vector3 a, b, c = HexGrid.Instance.curPath[0].Position;
-		yield return unit.LookAt(HexGrid.Instance.curPath[1].Position);
+		yield return unit.TurnTo(HexGrid.Instance.curPath[1].Position);
 
 		if (!unit.currentTravelLocation)
 		{
