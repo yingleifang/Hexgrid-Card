@@ -11,7 +11,7 @@ public class MeleeWeaponCard : WeaponCard
 
     public override bool CardSpecificChecks(Player player)
     {
-        if (player.selectedFeature is HexUnit temp && temp.unitType == CardType.MeleeSoldier)
+        if (player.selectedFeature is HexUnit temp && (temp.unitType == CardType.MeleeSoldier || temp.unitType == CardType.RangedSoldier))
         {
             return true;
         }

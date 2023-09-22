@@ -7,18 +7,22 @@ public class WeaponCard : Card
     public int attack;
     public int attackRange;
     public string Description;
-    public GameObject weaponPrefab;
+    public WeaponBehavior weaponPrefab;
     public AnimatorOverrideController overrideController;
     public float attackAnimationLength;
+    public float attackActionDelay;
+    public bool isLeftHand = false;
+    public enum AttackType
+    {   
+        projectTile,
+        Melee,
+    }
 
     public override void UseEffect(Player player)
     {
         if ((player.selectedFeature is HexUnit temp))
         {
-            temp.weaponCard = this;
-            temp.myWeaponSlotManager.LoadWeaponOnSlot(weaponPrefab, false);
-            temp.unitAnimation.unitAnimator.runtimeAnimatorController = overrideController;
-            SetattackAnimationLength();
+            temp.weaponInstance = EquipWeapon(temp);
         }
         else
         {
@@ -26,9 +30,12 @@ public class WeaponCard : Card
         }
     }
 
-    public void SetattackAnimationLength()
+    public virtual WeaponBehavior EquipWeapon(HexUnit temp)
     {
-        attackAnimationLength = overrideController.animationClips[0].length;
+        temp.weaponCard = this;
+        temp.unitAnimation.unitAnimator.runtimeAnimatorController = overrideController;
+        attackActionDelay = attackAnimationLength * 2 / 3;
+        return temp.myWeaponSlotManager.LoadWeaponOnSlot(weaponPrefab, isLeftHand);
     }
 
     public virtual void WeaponVisualEffect(Vector3 position)

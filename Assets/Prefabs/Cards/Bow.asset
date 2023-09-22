@@ -21,5 +21,8 @@ MonoBehaviour:
   attack: 0
   attackRange: 2
   Description: A bow
-  weaponPrefab: {fileID: 6125553646863560973, guid: 7bb760ed15163364a9ed5bc428b01f98, type: 3}
+  weaponPrefab: {fileID: 8695668848950330678, guid: 7bb760ed15163364a9ed5bc428b01f98, type: 3}
   overrideController: {fileID: 22100000, guid: c7ae047b096e2054eb90deb3419861de, type: 2}
+  attackAnimationLength: 0.8
+  attackActionDelay: 0.53333336
+  isLeftHand: 0

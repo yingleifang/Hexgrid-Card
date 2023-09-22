@@ -115,21 +115,17 @@ public class EnemyAI : Player
             if (!TurnManager.Instance.isPlayer1Turn)
             {
                 int baseNum = UnityEngine.Random.Range(0, myspawnPoints.Count);
-                if (myspawnPoints[baseNum].location.unitFeature == null)
+                int attemps = 0;
+                while (myspawnPoints[baseNum].location.unitFeature != null && attemps < myspawnPoints.Count)
+                {
+                    baseNum += 1;
+                    baseNum %= myspawnPoints.Count;
+                    attemps += 1;
+                }
+                if (attemps < myspawnPoints.Count)
                 {
                     DoSelection(myspawnPoints[baseNum].location);
                     cardDatabase.GetRandomUnitCard().UseEffect(this);
-                }
-                else
-                {
-                    foreach (var curPawnPoint in myspawnPoints)
-                    {
-                    if (curPawnPoint.location.unitFeature == null)
-                        {
-                            HexGrid.Instance.AddUnit(curPawnPoint.location, curPawnPoint.orientation);
-                            break;
-                        }
-                    }
                 }
             }
         }

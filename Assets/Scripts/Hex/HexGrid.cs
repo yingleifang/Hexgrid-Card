@@ -18,9 +18,6 @@ public class HexGrid : MonoBehaviour
 	public bool BlockActions = false;
 
 	[SerializeField]
-	public HexUnit unitPrefab;
-
-	[SerializeField]
 	public Base player1BasePrefab;
 
 	[SerializeField]
@@ -102,7 +99,6 @@ public class HexGrid : MonoBehaviour
 		CellCountZ = 15;
 		HexMetrics.noiseSource = noiseSource;
 		HexMetrics.InitializeHashGrid(seed);
-		HexUnit.unitPrefab = unitPrefab;
 		cellShaderData = gameObject.AddComponent<HexCellShaderData>();
 		CreateMap(CellCountX, CellCountZ);
 	}
@@ -122,7 +118,7 @@ public class HexGrid : MonoBehaviour
 		feature.Orientation = orientation;
 	}
 
-	public HexUnit AddUnit(HexCell location, float orientation)
+	public HexUnit AddUnit(HexCell location, float orientation, HexUnit unitPrefab)
     {
 		HexUnit unit = Instantiate(unitPrefab);
 		unit.Location = location;
@@ -240,7 +236,6 @@ public class HexGrid : MonoBehaviour
 		{
 			HexMetrics.noiseSource = noiseSource;
 			HexMetrics.InitializeHashGrid(seed);
-			HexUnit.unitPrefab = unitPrefab;
 		}
 	}
 

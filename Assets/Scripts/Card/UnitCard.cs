@@ -1,3 +1,5 @@
+using UnityEngine;
+
 public class UnitCard : Card
 {
     public int attack;
@@ -5,5 +7,6 @@ public class UnitCard : Card
     public int health;
     public int Speed;
     public WeaponCard baseWeapon;
-
+    [SerializeField]
+    protected HexUnit unitPrefab;
 }

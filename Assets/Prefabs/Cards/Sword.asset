@@ -21,5 +21,8 @@ MonoBehaviour:
   attack: 1
   attackRange: 0
   Description: Gives 1 additional damage to Melee Unit
-  weaponPrefab: {fileID: 6125553646863560973, guid: 8be8034f18e23714693badfd7441a16f, type: 3}
+  weaponPrefab: {fileID: 5070660183113578329, guid: 8be8034f18e23714693badfd7441a16f, type: 3}
   overrideController: {fileID: 22100000, guid: ee858d4788b22904390bbe56be63fb7b, type: 2}
+  attackAnimationLength: 0.8
+  attackActionDelay: 0.5333334
+  isLeftHand: 0

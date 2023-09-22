@@ -23,3 +23,4 @@ MonoBehaviour:
   health: 6
   Speed: 20
   baseWeapon: {fileID: 11400000, guid: d8da67d4058345844897d22dbc61b60f, type: 2}
+  unitPrefab: {fileID: 114701888605048992, guid: a60e1aa13fdf7ed44972c98fa7440134, type: 3}

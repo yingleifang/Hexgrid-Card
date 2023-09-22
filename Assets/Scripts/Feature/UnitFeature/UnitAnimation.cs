@@ -8,7 +8,7 @@ public class UnitAnimation : MonoBehaviour
     public Animator unitAnimator;
     private void Awake()
     {
-        unitAnimator = FindObjectOfType<Animator>();
+        unitAnimator = GetComponentInChildren<Animator>();
         unitAnimator.fireEvents = false;
         HexUnit myUnit = GetComponent<HexUnit>();
         myUnit.GetMoveAction().StartMoving += UnitAnimation_StartMoving;

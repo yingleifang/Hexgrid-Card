@@ -29,11 +29,13 @@ public class CardAreaManager : MonoBehaviour
 
     IEnumerator RevealAll(int[] cardIndex)
     {
+        GameUIHandler.Instance.disableCanvasGroupRayCast();
         foreach (int i in cardIndex)
         {
             StartCoroutine(CardDisplays[i].Reveal());
             yield return new WaitForSeconds(0.5f);
         }
+        yield return new WaitForSeconds(0.3f);
         GameUIHandler.Instance.enableCanvasGroupRayCast();
     }
 

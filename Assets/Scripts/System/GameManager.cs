@@ -69,6 +69,7 @@ public class GameManager : MonoBehaviour
 
 	void TurnTransition(object sender, EventArgs e)
     {
+		GameUIHandler.Instance.disableCanvasGroupRayCast();
 		StartCoroutine(Wait1s());
     }
 
@@ -76,7 +77,6 @@ public class GameManager : MonoBehaviour
     {
 		yield return new WaitForSeconds(1f);
 		HexGrid.Instance.BlockActions = false;
-		GameUIHandler.Instance.enableCanvasGroupRayCast();
 	}
 	void Load()
 	{

@@ -404,6 +404,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 784682936}
     m_Modifications:
+    - target: {fileID: 1897798829548081112, guid: 1887bd6cd3c5aaa478276a5236c96d1e, type: 3}
+      propertyPath: unitCardList.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1897798829548081112, guid: 1887bd6cd3c5aaa478276a5236c96d1e, type: 3}
+      propertyPath: weaponCardList.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1897798829548081112, guid: 1887bd6cd3c5aaa478276a5236c96d1e, type: 3}
+      propertyPath: unitCardList.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: b911e0501874dbb419c724d75803e2dd, type: 2}
+    - target: {fileID: 1897798829548081112, guid: 1887bd6cd3c5aaa478276a5236c96d1e, type: 3}
+      propertyPath: weaponCardList.Array.data[2]
+      value: 
+      objectReference: {fileID: 11400000, guid: b6bbac523dbea0b44aeb005500009a0f, type: 2}
     - target: {fileID: 8035686246719196099, guid: 1887bd6cd3c5aaa478276a5236c96d1e, type: 3}
       propertyPath: m_RootOrder
       value: -1
@@ -1440,7 +1456,6 @@ MonoBehaviour:
   Bases: []
   spawnPoints: []
   BlockActions: 0
-  unitPrefab: {fileID: 114701888605048992, guid: a60e1aa13fdf7ed44972c98fa7440134, type: 3}
   player1BasePrefab: {fileID: 7918952402512787878, guid: cb7be9a74fd6e4cbdb5be2ac7319e699, type: 3}
   player2BasePrefab: {fileID: 5017646788383973698, guid: f2967fed6444e43559e32916c2465d27, type: 3}
   spawnpointPrefab: {fileID: 68927140510841878, guid: 694c4113acb734a299b240d50494600c, type: 3}
@@ -2504,6 +2519,42 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 78562609}
     m_Modifications:
+    - target: {fileID: 1897798829548081112, guid: 1887bd6cd3c5aaa478276a5236c96d1e, type: 3}
+      propertyPath: unitCardList.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1897798829548081112, guid: 1887bd6cd3c5aaa478276a5236c96d1e, type: 3}
+      propertyPath: weaponCardList.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1897798829548081112, guid: 1887bd6cd3c5aaa478276a5236c96d1e, type: 3}
+      propertyPath: unitCardList.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 1398f35cd06763b468f4f31d7ef9f066, type: 2}
+    - target: {fileID: 1897798829548081112, guid: 1887bd6cd3c5aaa478276a5236c96d1e, type: 3}
+      propertyPath: unitCardList.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: 1398f35cd06763b468f4f31d7ef9f066, type: 2}
+    - target: {fileID: 1897798829548081112, guid: 1887bd6cd3c5aaa478276a5236c96d1e, type: 3}
+      propertyPath: weaponCardList.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 30313863138d8cb4c9623b9009592079, type: 2}
+    - target: {fileID: 1897798829548081112, guid: 1887bd6cd3c5aaa478276a5236c96d1e, type: 3}
+      propertyPath: weaponCardList.Array.data[1]
+      value: 
+      objectReference: {fileID: 11400000, guid: 30313863138d8cb4c9623b9009592079, type: 2}
+    - target: {fileID: 1897798829548081112, guid: 1887bd6cd3c5aaa478276a5236c96d1e, type: 3}
+      propertyPath: weaponCardList.Array.data[2]
+      value: 
+      objectReference: {fileID: 11400000, guid: 30313863138d8cb4c9623b9009592079, type: 2}
+    - target: {fileID: 1897798829548081112, guid: 1887bd6cd3c5aaa478276a5236c96d1e, type: 3}
+      propertyPath: specialEffectCardList.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1897798829548081112, guid: 1887bd6cd3c5aaa478276a5236c96d1e, type: 3}
+      propertyPath: specialEffectCardList.Array.data[0]
+      value: 
+      objectReference: {fileID: 11400000, guid: 5a13ad54ef2e7864f93022a3b05cc771, type: 2}
     - target: {fileID: 8035686246719196099, guid: 1887bd6cd3c5aaa478276a5236c96d1e, type: 3}
       propertyPath: m_RootOrder
       value: -1

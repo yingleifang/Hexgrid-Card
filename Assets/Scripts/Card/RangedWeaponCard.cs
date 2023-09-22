@@ -11,20 +11,11 @@ public class RangedWeaponCard : WeaponCard
 
     public override bool CardSpecificChecks(Player player)
     {
-        if (player.selectedFeature is HexUnit temp && temp.unitType == CardType.RangedSoldier)
+        if (player.selectedFeature is HexUnit temp && (temp.unitType == CardType.MeleeSoldier || temp.unitType == CardType.RangedSoldier))
         {
             return true;
         }
 
         return false;
-    }
-
-    public override void UseEffect(Player player)
-    {
-        base.UseEffect(player);
-        if ((player.selectedFeature is HexUnit temp))
-        {
-            temp.projectile = weaponPrefab.GetComponentInChildren<Projectile>();
-        }
     }
 }

@@ -22,15 +22,15 @@ public class WeaponSlotManager : MonoBehaviour
         }
     }
 
-    public void LoadWeaponOnSlot(GameObject weaponModel, bool isLeft)
+    public WeaponBehavior LoadWeaponOnSlot(WeaponBehavior weaponModel, bool isLeft)
     {
         if (isLeft)
         {
-            leftHandSlot.LoadWeaponModel(weaponModel);
+             return leftHandSlot.LoadWeaponModel(weaponModel);
         }
         else
         {
-            rightHandSlot.LoadWeaponModel(weaponModel);
+            return rightHandSlot.LoadWeaponModel(weaponModel);
         }
     }
 }

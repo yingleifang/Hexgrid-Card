@@ -26,15 +26,15 @@ public class WeaponHolderSlot : MonoBehaviour
         }
     }
 
-    public void LoadWeaponModel(GameObject weaponItem)
+    public WeaponBehavior LoadWeaponModel(WeaponBehavior weaponItem)
     {
         UnloadWeaponAndDestroy();
         if (weaponItem == null)
         {
             UnLoadWeaopn();
-            return;
+            return null;
         }
-        GameObject model = Instantiate(weaponItem);
+        GameObject model = Instantiate(weaponItem.transform.gameObject);
         if (model != null)
         {
             if(parentOverride != null)
@@ -50,5 +50,6 @@ public class WeaponHolderSlot : MonoBehaviour
             model.transform.localScale = Vector3.one;
         }
         curerntWeaponModel = model;
+        return model.GetComponent<WeaponBehavior>();
     }
 }

@@ -30,7 +30,6 @@ public class Player : MonoBehaviour
     public List<SpawnPoint> myspawnPoints;
 
     bool CurrentCellChanged;
-
     void Start()
     {
         curMana = startingMana;

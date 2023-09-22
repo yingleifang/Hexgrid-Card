@@ -19,7 +19,10 @@ MonoBehaviour:
   backGround: {fileID: 0}
   portrait: {fileID: 0}
   attack: 0
-  attackRange: 0
+  attackRange: 1
   Description: 
   weaponPrefab: {fileID: 0}
   overrideController: {fileID: 22100000, guid: c3ffad3ca1148a14d967e6832a0e5544, type: 2}
+  attackAnimationLength: 0.8
+  attackActionDelay: 0.53333336
+  isLeftHand: 0

@@ -38,23 +38,19 @@ public class HexUnit : UnitFeature
 
 	public UnitAnimation unitAnimation;
 
-	public Projectile projectile;
-
 	[SerializeField]
 	public WeaponSlotManager myWeaponSlotManager;
+
+	public WeaponBehavior weaponInstance;
 	void Awake()
 	{
 		moveAction = GetComponent<MoveAction>();
 		attackAction = GetComponent<AttackAction>();
 	}
-	private void Start()
-	{
-		unitAnimation = GetComponentInChildren<UnitAnimation>();
-	}
 
 	public float getHitDelay()
     {
-		return weaponCard.attackAnimationLength * 2/3;
+		return weaponCard.attackActionDelay;
     }
 	public void reFillActions()
     {
@@ -192,13 +188,18 @@ public class HexUnit : UnitFeature
 
 	public int GetUnitAttackRange()
 	{
-		int totalDamage = attackDamage;
+		int totalAttackRange = AttackRange;
 		if (weaponCard)
 		{
-			totalDamage += weaponCard.attackRange;
+			totalAttackRange += weaponCard.attackRange;
 		}
-		return totalDamage;
+		return totalAttackRange;
 	}
+
+	public void Shoot()
+    {
+		Debug.Log("????????????????????");
+    }
 
 	//	void OnDrawGizmos () {
 	//		if (pathToTravel == null || pathToTravel.Count == 0) {
