@@ -21,7 +21,7 @@ MonoBehaviour:
   attack: 0
   attackRange: 1
   Description: 
-  weaponPrefab: {fileID: 0}
+  weaponPrefab: {fileID: 1355118521907295040, guid: 9a81a282097d78544bbef7ae834dfb21, type: 3}
   overrideController: {fileID: 22100000, guid: c3ffad3ca1148a14d967e6832a0e5544, type: 2}
   attackAnimationLength: 0.8
   attackActionDelay: 0.53333336

@@ -9,16 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb34aba71bb2a4b4681fa7a2883cae83, type: 3}
-  m_Name: ElementalMage
+  m_Script: {fileID: 11500000, guid: c0d5ce23b55985c468d31a7034cd59d1, type: 3}
+  m_Name: ApprenticeElementalMage
   m_EditorClassIdentifier: 
   id: 0
-  cardName: ElementalMage
-  cost: 5
+  cardName: ApprenticeElementalMage
+  cost: 0
   cardType: 0
-  backGround: {fileID: 21300000, guid: 849cdd94a9e424fffb38cf5bcdd4b196, type: 3}
-  portrait: {fileID: 21300000, guid: 8dd207ef7479646f391224ef3c0ba23d, type: 3}
-  attack: 2
+  backGround: {fileID: 0}
+  portrait: {fileID: 0}
+  attack: 1
   attackRange: 1
   health: 6
   Speed: 20

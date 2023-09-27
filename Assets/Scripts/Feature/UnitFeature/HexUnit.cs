@@ -3,6 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System;
+using UnityEngine.UIElements;
+using static UnityEngine.GraphicsBuffer;
+using UnityEditor.Rendering;
 
 /// <summary>
 /// Component representing a unit that occupies a cell of the hex map.
@@ -42,8 +45,9 @@ public class HexUnit : UnitFeature
 	public WeaponSlotManager myWeaponSlotManager;
 
 	public WeaponBehavior weaponInstance;
-	void Awake()
+	protected override void Awake()
 	{
+		base.Awake();
 		moveAction = GetComponent<MoveAction>();
 		attackAction = GetComponent<AttackAction>();
 	}

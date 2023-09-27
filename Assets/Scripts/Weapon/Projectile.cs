@@ -7,7 +7,7 @@ public class Projectile : WeaponBehavior
     [SerializeField] GameObject projectile;
     float deltaRange = 1f;
     float speed = 200;
-    float arrowPositionScaller = 1.8f;
+    float arrowPositionScaller = 0.2f;
     //private void Start()
     //{
     //    projectile = transform.GetChild(0).GetChild(0).gameObject;
@@ -18,11 +18,10 @@ public class Projectile : WeaponBehavior
     //}
     public override IEnumerator AttackBehavior(UnitFeature target, UnitFeature attacker)
     {
-        CapsuleCollider capsuleCollider = target.GetComponent<CapsuleCollider>();
-        GameObject projectileInstance = Instantiate(projectile, attacker.transform.position + capsuleCollider.height * target.transform.localScale.y * Vector3.up / arrowPositionScaller, Quaternion.identity);
+        GameObject projectileInstance = Instantiate(projectile, attacker.transform.position + target.meshHeight * transform.localScale.y * Vector3.up / arrowPositionScaller, Quaternion.identity);
         projectileInstance.transform.localScale = attacker.transform.localScale;
         projectile.SetActive(false);
-        Vector3 position = target.transform.position + capsuleCollider.height * target.transform.localScale.y * Vector3.up / arrowPositionScaller;
+        Vector3 position = target.transform.position + target.meshHeight * transform.localScale.y * Vector3.up / arrowPositionScaller;
         while (Mathf.Abs(projectileInstance.transform.position.z - position.z) > deltaRange || Mathf.Abs(projectileInstance.transform.position.x - position.x) > deltaRange)
         {
             projectileInstance.transform.LookAt(position);

@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class UnitFeature : Feature
 {
@@ -9,7 +11,14 @@ public class UnitFeature : Feature
 	public int UnitTotalHealth { get; protected set; } = 99;
 
 	public event EventHandler OnDamaged;
-	public override HexCell Location
+
+    public float meshHeight;
+
+    protected virtual void Awake()
+    {
+		meshHeight = GetComponent<CapsuleCollider>().height;
+    }
+    public override HexCell Location
 	{
 		get => location;
 		set
