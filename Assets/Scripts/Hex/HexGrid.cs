@@ -3,13 +3,17 @@ using UnityEngine.UI;
 using System.IO;
 using System.Collections.Generic;
 using System;
+using Unity.Netcode;
 
 /// <summary>
 /// Component that represents an entire hexagon map.
 /// </summary>
 public class HexGrid : MonoBehaviour
 {
-	public static HexGrid Instance { get; private set; }
+    [SerializeField]
+    Material terrainMaterial;
+
+    public static HexGrid Instance { get; private set; }
 
 	public List<HexUnit> units = new List<HexUnit>();
 	public List<Base> Bases = new List<Base>();
@@ -17,14 +21,18 @@ public class HexGrid : MonoBehaviour
 	
 	public bool BlockActions = false;
 
-	[SerializeField]
-	public Base player1BasePrefab;
+    public string mapSuffix = ".map";
+    public string featureSuffix = ".ftr";
 
+    [SerializeField]
+	public Base player1BasePrefab;
 	[SerializeField]
 	public Base player2BasePrefab;
 
 	[SerializeField]
-	public SpawnPoint spawnpointPrefab;
+	public SpawnPoint player1SpawnPointPrefab;
+	[SerializeField]
+	public SpawnPoint player2SpawnPointPrefab;
 
 	[SerializeField]
 	HexCell cellPrefab;
@@ -59,8 +67,6 @@ public class HexGrid : MonoBehaviour
 
 	public List<HexCell> curPath;
 
-	public Player localPlayer;
-
 	/// <summary>
 	/// Whether there currently exists a path that should be displayed.
 	/// </summary>
@@ -88,6 +94,8 @@ public class HexGrid : MonoBehaviour
 	};
 	void Awake ()
 	{
+        terrainMaterial.DisableKeyword("_SHOW_GRID");
+        Shader.EnableKeyword("_HEX_MAP_EDIT_MODE");
         if (Instance != null)
         {
             Debug.LogError("There's more than one TurnSystem!");
@@ -110,7 +118,8 @@ public class HexGrid : MonoBehaviour
 		}else if (feature is Base baseFeature)
         {
 			Bases.Add(baseFeature);
-        }else if (feature is SpawnPoint spawnPointFeature)
+        }
+        else if (feature is SpawnPoint spawnPointFeature)
         {
 			spawnPoints.Add(spawnPointFeature);
         }
@@ -125,8 +134,8 @@ public class HexGrid : MonoBehaviour
 		unit.Orientation = orientation;
 		location.unitFeature = unit;
 		units.Add(unit);
-		GameManager.Instance.currentPlayer.myUnits.Add(unit);
-		unit.myPlayer = GameManager.Instance.currentPlayer;
+		GameManagerServer.Instance.currentPlayer.myUnits.Add(unit);
+		unit.myPlayer = GameManagerServer.Instance.currentPlayer;
 		return unit;
 	}
 
@@ -369,7 +378,7 @@ public class HexGrid : MonoBehaviour
 	/// Save the map.
 	/// </summary>
 	/// <param name="writer"><see cref="BinaryWriter"/> to use.</param>
-	public void Save (BinaryWriter writer)
+	public void SaveMap(BinaryWriter writer)
 	{
 		writer.Write(CellCountX);
 		writer.Write(CellCountZ);
@@ -378,27 +387,16 @@ public class HexGrid : MonoBehaviour
 		{
 			cells[i].Save(writer);
 		}
-		writer.Write(Bases.Count);
-		for (int i = 0; i < Bases.Count; i++)
-		{
-			Bases[i].Save(writer);
-		}
-		writer.Write(spawnPoints.Count);
-		for (int i = 0; i < spawnPoints.Count; i++)
-		{
-			spawnPoints[i].Save(writer);
-		}
 	}
 
-	/// <summary>
-	/// Load the map.
-	/// </summary>
-	/// <param name="reader"><see cref="BinaryReader"/> to use.</param>
-	/// <param name="header">Header version.</param>
-	public List<HexCoordinates> Load (BinaryReader reader, int header)
+    /// <summary>
+    /// Load the map.
+    /// </summary>
+    /// <param name="reader"><see cref="BinaryReader"/> to use.</param>
+    /// <param name="header">Header version.</param>
+    public void LoadMap (BinaryReader reader, int header)
 	{
 		ClearUnits();
-		List<HexCoordinates> baseCoordinates = new();
 		int x = 20, z = 15;
 		if (header >= 1)
 		{
@@ -409,55 +407,129 @@ public class HexGrid : MonoBehaviour
 		{
 			if (!CreateMap(x, z))
 			{
-				return null;
+				Debug.LogError("Cannot load map");
 			}
 		}
-
-		for (int i = 0; i < cells.Length; i++)
-		{
-			cells[i].Load(reader, header);
-		}
-		for (int i = 0; i < chunks.Length; i++)
-		{
-			chunks[i].Refresh();
-		}
-
+        for (int i = 0; i < cells.Length; i++)
+        {
+            cells[i].Load(reader, header);
+        }
+        for (int i = 0; i < chunks.Length; i++)
+        {
+            chunks[i].Refresh();
+        }
+    }
+    public void SaveFeature(BinaryWriter writer)
+    {
+        writer.Write(Bases.Count);
+        for (int i = 0; i < Bases.Count; i++)
+        {
+            writer.Write(Bases[i].playerID);
+            Bases[i].Save(writer);
+        }
+        writer.Write(spawnPoints.Count);
+        for (int i = 0; i < spawnPoints.Count; i++)
+        {
+            writer.Write(spawnPoints[i].playerID);
+            spawnPoints[i].Save(writer);
+        }
+    }
+    public void LoadFeature(BinaryReader reader, int header)
+	{
 		if (header >= 2)
 		{
 			try
 			{
-				int baseCount = reader.ReadInt32();
+                int baseCount = reader.ReadInt32();
 				for (int i = 0; i < baseCount; i++)
 				{
-					baseCoordinates.Add(HexCoordinates.Load(reader));
-					reader.ReadSingle();
-				}
-			}
-            catch
-            {
-				Debug.Log("Problem loading bases");
-            }
-			try
-			{
-				int baseCount = reader.ReadInt32();
-				for (int i = 0; i < baseCount; i++)
+					int basePlayer = reader.ReadInt32();
+					if (basePlayer == GameManagerClient.Instance.corresPlayer.playerID)
+					{
+                        GameManagerServer.Instance.player1.myBases.Add(SpawnFeatureOnNetwork(player1BasePrefab, reader) as Base);
+					}
+					else
+					{
+						Feature spawnedFeature = SpawnFeatureOnNetwork(player2BasePrefab, reader);
+                        GameManagerClient.Instance.AddToFeatureToClient(spawnedFeature);
+					}
+                }
+                int spawnPointCount = reader.ReadInt32();
+				for (int i = 0; i < spawnPointCount; i++)
 				{
-                    Feature.Load(reader, this, spawnpointPrefab);
-				}
+					int spawnPointPlayer = reader.ReadInt32();
+                    if (spawnPointPlayer == GameManagerClient.Instance.corresPlayer.playerID)
+                    {
+                        GameManagerServer.Instance.player1.myspawnPoints.Add(SpawnFeatureOnNetwork(player1SpawnPointPrefab, reader) as SpawnPoint);
+                    }
+                    else
+					{
+                        Feature spawnedFeature = SpawnFeatureOnNetwork(player2SpawnPointPrefab, reader);
+                        GameManagerClient.Instance.AddToFeatureToClient(spawnedFeature);
+                    }
+                }
 			}
-			catch
-			{
-				Debug.Log("Problem loading spawnPoint");
-			}
-		}
-		return baseCoordinates;
-	}
+            catch (Exception e) { Debug.LogException(e); }
+        }
+    }
 
-	/// <summary>
-	/// Get a list of cells representing the currently visible path.
-	/// </summary>
-	/// <returns>The current path list, if a visible path exists.</returns>
-	public bool GetPath (int pathLimit = 100)
+	public Feature SpawnFeatureOnNetwork(Feature prefabToSpawn, BinaryReader reader)
+	{
+        Feature spawnedFeature = Feature.Load(reader, this, prefabToSpawn);
+        NetworkObject featureNetworkObj = spawnedFeature.GetComponent<NetworkObject>();
+        featureNetworkObj.Spawn();
+		return spawnedFeature;
+    }
+
+    public void LoadFeatureLocal(BinaryReader reader, int header)
+    {
+        if (header >= 2)
+        {
+            try
+            {
+                Feature spawnedFeature = null;
+                int baseCount = reader.ReadInt32();
+                for (int i = 0; i < baseCount; i++)
+                {
+                    int basePlayer = reader.ReadInt32();
+                    Debug.Log(basePlayer);
+                    Base basePrefab = (basePlayer == 1) ? player1BasePrefab : player2BasePrefab;
+                    spawnedFeature = Feature.Load(reader, this, basePrefab);
+					if (basePlayer == SinglePlayer.Instance.player1.playerID)
+					{
+                        SinglePlayer.Instance.player1.myBases.Add(spawnedFeature as Base);
+					}
+					else
+					{
+                        SinglePlayer.Instance.player2.myBases.Add(spawnedFeature as Base);
+                    }
+                }
+                int spawnPointCount = reader.ReadInt32();
+                for (int i = 0; i < spawnPointCount; i++)
+                {
+                    int spawnPointPlayer = reader.ReadInt32();
+                    Debug.Log(spawnPointPlayer);
+                    SpawnPoint spawnPointPrefab = (spawnPointPlayer == 1) ? player1SpawnPointPrefab : player2SpawnPointPrefab;
+                    spawnedFeature = Feature.Load(reader, this, spawnPointPrefab);
+                    if (spawnPointPlayer == SinglePlayer.Instance.player1.playerID)
+                    {
+                        SinglePlayer.Instance.player1.myspawnPoints.Add(spawnedFeature as SpawnPoint);
+					}
+					else
+					{
+                        SinglePlayer.Instance.player2.myspawnPoints.Add(spawnedFeature as SpawnPoint);
+                    }
+                }
+            }
+            catch (Exception e) { Debug.LogException(e); }
+        }
+    }
+
+    /// <summary>
+    /// Get a list of cells representing the currently visible path.
+    /// </summary>
+    /// <returns>The current path list, if a visible path exists.</returns>
+    public bool GetPath (int pathLimit = 100)
 	{
 		if (!CurrentPathExists)
 		{
@@ -516,7 +588,7 @@ public class HexGrid : MonoBehaviour
 		currentPathFrom = fromCell;
 		currentPathTo = toCell;
 		CurrentPathExists = Search(fromCell, toCell, unit, movementRange);
-		if (GameManager.Instance.currentPlayer == localPlayer)
+		if (GameManagerServer.Instance.currentPlayer == GameManagerClient.Instance.corresPlayer)
 		{
 			ShowPath();
 		}

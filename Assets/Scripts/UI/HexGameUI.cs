@@ -9,10 +9,6 @@ public class HexGameUI : MonoBehaviour {
 	[SerializeField]
 	HexGrid grid;
 
-	HexCell currentCell;
-
-	Feature selectedFeature;
-
 	/// <summary>
 	/// Set whether map edit mode is active.
 	/// </summary>
@@ -65,13 +61,13 @@ public class HexGameUI : MonoBehaviour {
 	//	}
 	//}
 
-	bool UpdateCurrentCell () {
-		HexCell cell =
-			grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
-		if (cell != currentCell) {
-			currentCell = cell;
-			return true;
-		}
-		return false;
-	}
+	//bool UpdateCurrentCell () {
+	//	HexCell cell =
+	//		grid.GetCell(Camera.main.ScreenPointToRay(Input.mousePosition));
+	//	if (cell != currentCell) {
+	//		currentCell = cell;
+	//		return true;
+	//	}
+	//	return false;
+	//}
 }

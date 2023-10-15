@@ -14,7 +14,7 @@ public class DeleteCard : MonoBehaviour
 
     public void ChangeCursorToDelete()
     {
-        GameManager.Instance.deleteMode = true;
+        GameManagerServer.Instance.deleteMode = true;
         Cursor.SetCursor(cursorTexture, cursorHotspot, CursorMode.Auto);
     }
 }

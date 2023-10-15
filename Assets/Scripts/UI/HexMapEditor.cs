@@ -1,5 +1,7 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 /// <summary>
 /// Component that applies UI commands to the hex map.
@@ -9,8 +11,8 @@ public class HexMapEditor : MonoBehaviour
 {
 	static int cellHighlightingId = Shader.PropertyToID("_CellHighlighting");
 
-	[SerializeField]
-	Material terrainMaterial;
+	//[SerializeField]
+	//Material terrainMaterial;
 
 	int activeElevation;
 	int activeWaterLevel;
@@ -25,6 +27,10 @@ public class HexMapEditor : MonoBehaviour
 	bool applyWaterLevel = true;
 
 	bool applyUrbanLevel, applyFarmLevel, applyPlantLevel, applySpecialIndex;
+
+	public int activeFaction = 1;
+
+	public Button factionButton;
 
 	enum OptionalToggle
 	{
@@ -73,24 +79,24 @@ public class HexMapEditor : MonoBehaviour
 
 	public void SetEditMode (bool toggle) => enabled = toggle;
 
-	public void ShowGrid (bool visible)
-	{
-		if (visible)
-		{
-			terrainMaterial.EnableKeyword("_SHOW_GRID");
-		}
-		else
-		{
-			terrainMaterial.DisableKeyword("_SHOW_GRID");
-		}
-	}
+	//public void ShowGrid (bool visible)
+	//{
+	//	if (visible)
+	//	{
+	//		terrainMaterial.EnableKeyword("_SHOW_GRID");
+	//	}
+	//	else
+	//	{
+	//		terrainMaterial.DisableKeyword("_SHOW_GRID");
+	//	}
+	//}
 
-	void Awake ()
-	{
-        terrainMaterial.DisableKeyword("_SHOW_GRID");
-        Shader.EnableKeyword("_HEX_MAP_EDIT_MODE");
-        SetEditMode(true);
-    }
+	//void Awake ()
+	//{
+ //       terrainMaterial.DisableKeyword("_SHOW_GRID");
+ //       Shader.EnableKeyword("_HEX_MAP_EDIT_MODE");
+ //       SetEditMode(true);
+ //   }
 
 	void Update ()
 	{
@@ -106,7 +112,20 @@ public class HexMapEditor : MonoBehaviour
 				// Potential optimization: only do this if camera or cursor has changed.
 				UpdateCellHighlightData(GetCellUnderCursor());
 			}
-			if (Input.GetKeyDown(KeyCode.U))
+			if (Input.GetKeyDown(KeyCode.Alpha0))
+			{
+				activeFaction = 0;
+				factionButton.GetComponentInChildren<TextMeshProUGUI>().text = "Faction: " + activeFaction;
+            }
+            else if (Input.GetKeyDown(KeyCode.Alpha1)){
+                activeFaction = 1;
+                factionButton.GetComponentInChildren<TextMeshProUGUI>().text = "Faction: " + activeFaction;
+			}else if (Input.GetKeyDown(KeyCode.Alpha2))
+			{
+                activeFaction = 2;
+                factionButton.GetComponentInChildren<TextMeshProUGUI>().text = "Faction: " + activeFaction;
+			}
+            if (Input.GetKeyDown(KeyCode.M))
 			{
 				if (Input.GetKey(KeyCode.LeftShift))
 				{
@@ -114,11 +133,14 @@ public class HexMapEditor : MonoBehaviour
 				}
 				else
 				{
-					CreateUnitFeature(HexGrid.Instance.player1BasePrefab);
+					if (activeFaction == 1)
+                        CreateUnitFeature(HexGrid.Instance.player1BasePrefab);
+                    else if (activeFaction == 2)
+						CreateUnitFeature(HexGrid.Instance.player2BasePrefab);
 				}
 				return;
 			}
-			if (Input.GetKeyDown(KeyCode.I))
+            if (Input.GetKeyDown(KeyCode.I))
 			{
 				if (Input.GetKey(KeyCode.LeftShift))
 				{
@@ -126,7 +148,10 @@ public class HexMapEditor : MonoBehaviour
 				}
 				else
 				{
-					CreateTerrainFeature(HexGrid.Instance.spawnpointPrefab);
+					if (activeFaction == 1)
+                        CreateTerrainFeature(HexGrid.Instance.player1SpawnPointPrefab);
+                    else if (activeFaction == 2)
+                        CreateTerrainFeature(HexGrid.Instance.player2SpawnPointPrefab);
 				}
 				return;
 			}
@@ -146,8 +171,9 @@ public class HexMapEditor : MonoBehaviour
 		HexCell cell = GetCellUnderCursor();
 		if (cell && !cell.unitFeature)
 		{
+			Feature feature = Instantiate(unitFeature);
 			HexGrid.Instance.AddFeature(
-				Instantiate(unitFeature), cell, Random.Range(0f, 360f)
+                feature, cell, Random.Range(0f, 360f)
 			);
 		}
 	}

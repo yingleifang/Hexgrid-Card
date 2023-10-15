@@ -14,7 +14,6 @@ public class GameUIHandler : MonoBehaviour
             return;
         }
         Instance = this;
-        disableCanvasGroupRayCast();
     }
 
     [SerializeField]

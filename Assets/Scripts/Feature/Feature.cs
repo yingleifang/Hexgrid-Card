@@ -1,9 +1,11 @@
 using UnityEngine;
 using System.IO;
 using System;
+using Unity.Netcode;
 
-public class Feature : MonoBehaviour
+public class Feature : NetworkBehaviour
 {
+	public int playerID = 1;
 	public float orientation;
 
 	public HexCell location;
@@ -54,16 +56,26 @@ public class Feature : MonoBehaviour
 	/// </summary>
 	public void ValidateLocation() => transform.localPosition = location.Position;
 
-	public static void Load(BinaryReader reader, HexGrid grid, Feature feature)
+	//load feature from file
+	public static Feature Load(BinaryReader reader, HexGrid grid, Feature feature)
 	{
 		HexCoordinates coordinates = HexCoordinates.Load(reader);
-		float orientation = reader.ReadSingle();
+		Feature spawnedFeature = Instantiate(feature);
+        float orientation = reader.ReadSingle();
 		grid.AddFeature(
-			Instantiate(feature), grid.GetCell(coordinates), orientation
+            spawnedFeature, grid.GetCell(coordinates), orientation
 		);
+		return spawnedFeature;
 	}
 
-	public void RaiseFeatureSelectedEvent()
+    //Same as load but without spawning
+    public static void LoadSkip(BinaryReader reader)
+	{
+        HexCoordinates.Load(reader);
+        reader.ReadSingle();
+    }
+
+    public void RaiseFeatureSelectedEvent()
 	{
 		FeatureSelected?.Invoke(this, EventArgs.Empty);
 	}

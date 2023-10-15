@@ -16,7 +16,7 @@ public abstract class TerrainFeature : Feature
 			location = value;
 			value.terrainFeature = this;
 			transform.localPosition = value.Position;
-			HexGrid.Instance.MakeChildOfColumn(transform, value.ColumnIndex);
+			//HexGrid.Instance.MakeChildOfColumn(transform, value.ColumnIndex);
 		}
 	}
 }

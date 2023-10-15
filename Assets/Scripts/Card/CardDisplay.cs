@@ -81,7 +81,7 @@ public class CardDisplay : MonoBehaviour
         {
             return;
         }
-        if (GameManager.Instance.deleteMode)
+        if (GameManagerClient.Instance.deleteMode)
         {
             var res = UseCardChecks?.Invoke(deleteCardCost);
             if (res.Value.Item1) //Card can be Used
@@ -90,7 +90,7 @@ public class CardDisplay : MonoBehaviour
                 OnCardUsed?.Invoke(deleteCardCost);
                 StartCoroutine(StartDissolving());
                 StartCoroutine(StartFading());
-                GameManager.Instance.UnsetDeleteMode();
+                GameManagerClient.Instance.UnsetDeleteMode();
             }
             return;
         }

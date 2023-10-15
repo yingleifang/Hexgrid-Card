@@ -31,7 +31,7 @@ public class UnitCard : Card
         {
             return false;
         }
-        if (player.selectedFeature.myPlayer != GameManager.Instance.currentPlayer)
+        if (player.selectedFeature.myPlayer != GameManagerServer.Instance.currentPlayer)
         {
             return false;
         }

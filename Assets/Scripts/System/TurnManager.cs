@@ -28,7 +28,7 @@ public class TurnManager : MonoBehaviour
 		turnNumber++;
 		isPlayer1Turn = !isPlayer1Turn;
 		OnTurnChanged?.Invoke(this, EventArgs.Empty);
-		foreach (var unit in GameManager.Instance.currentPlayer.myUnits)
+		foreach (var unit in GameManagerServer.Instance.currentPlayer.myUnits)
         {
 			unit.reFillActions();
         }

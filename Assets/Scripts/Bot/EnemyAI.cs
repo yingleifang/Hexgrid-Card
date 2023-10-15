@@ -8,9 +8,6 @@ public class EnemyAI : Player
 
     [SerializeField]
     int maxUnits = 5;
-
-    [SerializeField]
-    CardDatabase cardDatabase;
     enum State
     {
         WaitingForEnemyTurn,
@@ -133,7 +130,7 @@ public class EnemyAI : Player
 
     private bool TryTakeEnemyAIAction(Action onEnemyAIActionComplete)
     {
-        foreach (HexUnit unit in GameManager.Instance.player2.myUnits)
+        foreach (HexUnit unit in GameManagerServer.Instance.player2.myUnits)
         {
             if (TakeEnemyAIAction(unit, onEnemyAIActionComplete))
             {

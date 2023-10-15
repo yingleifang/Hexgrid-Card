@@ -11,7 +11,7 @@ public class UnitWorldUI : MonoBehaviour
     [SerializeField] UnitFeature myUnit;
     [SerializeField] TextMeshPro healthText;
 
-    private void Awake()
+    private void Start()
     {
         myUnit.OnDamaged += UpdateHealthBar;
         myUnit.OnDamaged += UpdateHealthText;

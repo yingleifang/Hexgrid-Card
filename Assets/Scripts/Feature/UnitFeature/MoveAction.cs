@@ -48,7 +48,7 @@ public class MoveAction : BaseAction
 			int nextColumn = unit.currentTravelLocation.ColumnIndex;
 			if (currentColumn != nextColumn)
 			{
-				HexGrid.Instance.MakeChildOfColumn(transform, nextColumn);
+				//HexGrid.Instance.MakeChildOfColumn(transform, nextColumn);
 				currentColumn = nextColumn;
 			}
 

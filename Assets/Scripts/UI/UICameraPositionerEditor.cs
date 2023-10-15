@@ -1,6 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
+#if (UNITY_EDITOR) 
 namespace UserInterface.Editor
 {
     [CustomEditor(typeof(UICameraPositioner))]
@@ -17,3 +18,4 @@ namespace UserInterface.Editor
         }
     }
 }
+#endif

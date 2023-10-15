@@ -1,13 +1,10 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Experimental.GraphView;
+using Unity.Netcode;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public class UnitFeature : Feature
 {
-	public int UnitCurHealth { get; protected set; } = 99;
+    public int UnitCurHealth { get; protected set; } = 99;
 	public int UnitTotalHealth { get; protected set; } = 99;
 
 	public event EventHandler OnDamaged;
@@ -30,19 +27,9 @@ public class UnitFeature : Feature
 			location = value;
 			value.unitFeature = this;
 			transform.localPosition = value.Position;
-			HexGrid.Instance.MakeChildOfColumn(transform, value.ColumnIndex);
+			//HexGrid.Instance.MakeChildOfColumn(transform, value.ColumnIndex);
 		}
 	}
-    private void OnTriggerEnter(Collider other)
-    {
-		Debug.Log(other.transform.root.GetComponent<HexUnit>());
-		//var enemy = other.transform.root.GetComponent<HexUnit>();
-		//if (enemy)
-  //      {
-		//	TakeDamage(enemy.GetUnitDamage());
-		//}
-	}
-
     public virtual void TakeDamage(int damage)
     {
 		UnitCurHealth -= damage;

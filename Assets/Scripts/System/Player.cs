@@ -1,25 +1,26 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Player : MonoBehaviour
+public class Player : NetworkBehaviour
 {
-    [SerializeField]
-    List<Card> deck;
-    int draws = 3;
-    int maxCards = 7;
+    public int playerID { get; protected set; } = 1;
+
+    CardAreaManager cardArea;
+
+    ManaSystemUI manaSystemUI;
+
+    protected CardDatabase cardDatabase;
+
     int maxUnit = 5;
     public int startingMana = 10;
     public int curMana = 10;
     public int manaRegen = 10;
     public int maxMana = 20;
     public int deleteCardCost = 1;
-    [SerializeField]
-    CardAreaManager cardArea;
-    [SerializeField]
-    ManaSystemUI manaSystemUI;
     public HexCell CurrentCell { get; protected set; }
     public Feature selectedFeature;
 
@@ -32,34 +33,44 @@ public class Player : MonoBehaviour
     bool CurrentCellChanged;
     void Start()
     {
+        manaSystemUI = FindObjectOfType<ManaSystemUI>();
+        cardArea = FindObjectOfType<CardAreaManager>();
+        cardDatabase = FindObjectOfType<CardDatabase>();
+        manaSystemUI.UpdateManaText(startingMana);
         curMana = startingMana;
-        foreach(var cardDisplay in cardArea.CardDisplays)
+        TurnManager.Instance.OnTurnChanged += Player_OnTurnChanged;
+        GameManagerClient.Instance.SetCorresPlayer(this);
+        if (GameManagerServer.Instance == null)
+        {
+            playerID += 1;
+        }
+    }
+
+    public void InitiazeCardDisplay()
+    {
+        Debug.Log(cardArea);
+        foreach (var cardDisplay in cardArea.CardDisplays)
         {
             cardDisplay.UseCardChecks += Player_CardCheck;
             cardDisplay.OnCardUsed += ConsumeMana;
         }
         cardArea.FillSlots();
-        TurnManager.Instance.OnTurnChanged += Player_OnTurnChanged;
     }
-
     private void Player_OnTurnChanged(object sender, EventArgs e)
     {
-        if (!TurnManager.Instance.isPlayer1Turn && this == GameManager.Instance.player1)
-        {
-            cardArea.HideAllCards();
-            return;
-        }else if (TurnManager.Instance.isPlayer1Turn && this == GameManager.Instance.player2)
+        if (!GameManagerClient.Instance.isMyTurn)
         {
             cardArea.HideAllCards();
             return;
         }
         curMana += manaRegen;
         curMana = Math.Min(curMana, maxMana);
-        manaSystemUI.UpdateManaText();
+        manaSystemUI.UpdateManaText(GameManagerServer.Instance.currentPlayer.curMana);
         cardArea.FillSlots();
     }
     public virtual void TakeAction()
     {
+        Debug.Log("Taking actions");
         if (!EventSystem.current.IsPointerOverGameObject())
         {
             if (Input.GetMouseButtonDown(0))
@@ -144,22 +155,22 @@ public class Player : MonoBehaviour
     void ConsumeMana(int cost)
     {
         curMana -= cost;
-        manaSystemUI.UpdateManaText();
+        manaSystemUI.UpdateManaText(GameManagerServer.Instance.currentPlayer.curMana);
     }
     protected HexCell FindNearestEnemyCell(HexCoordinates curUnitCoord)
     {
         List<HexUnit> enemyUnits;
         List<Base> enemyBases;
         HexCell res = null;
-        if (GameManager.Instance.currentPlayer == GameManager.Instance.player1)
+        if (GameManagerServer.Instance.currentPlayer == GameManagerServer.Instance.player1)
         {
-            enemyUnits = GameManager.Instance.player2.myUnits;
-            enemyBases = GameManager.Instance.player2.myBases;
+            enemyUnits = GameManagerServer.Instance.player2.myUnits;
+            enemyBases = GameManagerServer.Instance.player2.myBases;
         }
         else
         {
-            enemyUnits = GameManager.Instance.player1.myUnits;
-            enemyBases = GameManager.Instance.player1.myBases;
+            enemyUnits = GameManagerServer.Instance.player1.myUnits;
+            enemyBases = GameManagerServer.Instance.player1.myBases;
         }
         int minDistance = Int32.MaxValue;
         foreach(var enemyUnit in enemyUnits)
@@ -182,4 +193,5 @@ public class Player : MonoBehaviour
         }
         return res;
     }
+
 }

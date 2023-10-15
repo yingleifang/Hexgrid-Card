@@ -6,13 +6,8 @@ using UnityEngine;
 public class ManaSystemUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI manaNumberText;
-
-    private void Start()
+    public void UpdateManaText(int curMana)
     {
-        UpdateManaText();
-    }
-    public void UpdateManaText()
-    {
-        manaNumberText.text = "Mana " + GameManager.Instance.currentPlayer.curMana;
+        manaNumberText.text = "Mana " + curMana;
     }
 }

@@ -6,7 +6,7 @@ public class AttackAction : BaseAction
 {
     public void DoAttack()
     {
-        GameManager.Instance.curAttackingPosition = unit.myPlayer.CurrentCell.unitFeature.location.Position;
+        GameManagerServer.Instance.curAttackingPosition = unit.myPlayer.CurrentCell.unitFeature.location.Position;
         unit.canAttack = false;
         StartBlockingCoroutine(Hitting(unit.myPlayer.CurrentCell.unitFeature));
     }
