@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.IO;
+using System.Security.Cryptography;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -21,13 +22,9 @@ public class GameManagerClient : NetworkBehaviour
         corresPlayer = player;
     }
 
-    ClientRpcParams clientRpcParams = new ClientRpcParams
-    {
-        Send = new ClientRpcSendParams
-        {
-            TargetClientIds = new ulong[] {}
-        }
-    };
+    public ClientRpcParams clientRpcParams;
+
+    public ClientRpcParams HostRpcParams;
 
     public Vector3 curAttackingPosition;
     private void Awake()
@@ -92,14 +89,26 @@ public class GameManagerClient : NetworkBehaviour
             Debug.Log("Waiting");
             yield return new WaitForSeconds(0.01f);
         }
+        if (IsHost)
+        {
+            clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { NetworkManager.Singleton.ConnectedClients[1].ClientId }
+                }
+            };
+            HostRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { NetworkManager.Singleton.ConnectedClients[0].ClientId }
+                }
+            };
+        }
         corresPlayer.InitiazeCardDisplay();
         LoadMap();
         GameUIHandler.Instance.disableCanvasGroupRayCast();
-    }
-    public void ClientStartTurn(ulong clientId)
-    {
-        clientRpcParams.Send.TargetClientIds = new ulong[] { clientId };
-        StartTurnClientRpc(clientRpcParams);
     }
 
     void TurnTransition(object sender, EventArgs e)
@@ -109,11 +118,11 @@ public class GameManagerClient : NetworkBehaviour
         //StartCoroutine(Wait1s());
         if (IsHost)
         {
-            ClientStartTurn(NetworkManager.Singleton.ConnectedClients[1].ClientId);
+            StartTurnClientRpc(clientRpcParams);
         }
         else
         {
-            ClientStartTurn(NetworkManager.Singleton.ConnectedClients[0].ClientId);
+            StartTurnClientRpc(HostRpcParams);
         }
     }
 
@@ -163,25 +172,10 @@ public class GameManagerClient : NetworkBehaviour
         Cursor.SetCursor(GameAssets.Instance.mainCursor, cursorHotspot, CursorMode.Auto);
     }
 
-    public void AddToFeatureToClient(Feature feature)
+    public void AddFeatureToClientPlayer(Feature feature)
     {
-        clientRpcParams.Send.TargetClientIds = new ulong[] { NetworkManager.Singleton.ConnectedClients[1].ClientId};
         ulong objId = feature.GetComponent<NetworkObject>().NetworkObjectId;
-        if (feature is HexUnit)
-        {
-            AddUnitClientRpc(objId, clientRpcParams);
-            GameManagerServer.Instance.player2.myUnits.Add(feature as HexUnit);
-        }
-        else if (feature is Base)
-        {
-            AddBaseClientRpc(objId, clientRpcParams);
-            GameManagerServer.Instance.player2.myBases.Add(feature as Base);
-        }
-        else if (feature is SpawnPoint)
-        {
-            AddSpawnPointClientRpc(objId, clientRpcParams);
-            GameManagerServer.Instance.player2.myspawnPoints.Add(feature as SpawnPoint);
-        }
+        AddFeatureToPlayerClientRpc(objId, clientRpcParams);
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -201,33 +195,44 @@ public class GameManagerClient : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void AddBaseClientRpc(ulong objId = 0, ClientRpcParams clientRpcParams = default)
+    public void AddFeatureToPlayerClientRpc(ulong objId = 0, ClientRpcParams clientRpcParams = default)
     {
-        Debug.Log("Add base");
-        if (!NetworkManager.Singleton.SpawnManager.SpawnedObjects[objId].TryGetComponent<Base>(out var myBase))
+        if (!NetworkManager.Singleton.SpawnManager.SpawnedObjects[objId].TryGetComponent<Feature>(out var myFeature))
         {
             Debug.LogError("Base is null");
         }
-        corresPlayer.myBases.Add(myBase);
+        if (myFeature is Base myBase)
+        {
+            corresPlayer.myBases.Add(myBase);
+        }else if (myFeature is SpawnPoint mySpawnPoint)
+        {
+            corresPlayer.myspawnPoints.Add(mySpawnPoint);
+        }else if (myFeature is HexUnit myUnit)
+        {
+            corresPlayer.myUnits.Add(myUnit);
+        }
     }
 
     [ClientRpc]
-    public void AddSpawnPointClientRpc(ulong objId = 0, ClientRpcParams clientRpcParams = default)
+    public void AddFeatureToMapClientRpc(int x, int z, ulong objId, ClientRpcParams clientRpcParams = default)
     {
-        if (!NetworkManager.Singleton.SpawnManager.SpawnedObjects[objId].TryGetComponent<SpawnPoint>(out var mySpawnPoint))
-        {
-            Debug.LogError("SpawnPoint is null");
-        }
-        corresPlayer.myspawnPoints.Add(mySpawnPoint);
+        StartCoroutine(TryAddFeature(x, z, objId, clientRpcParams));
     }
 
-    [ClientRpc]
-    public void AddUnitClientRpc(ulong objId = 0, ClientRpcParams clientRpcParams = default)
+    public IEnumerator TryAddFeature(int x, int z, ulong objId, ClientRpcParams clientRpcParams = default)
     {
-        if (!NetworkManager.Singleton.SpawnManager.SpawnedObjects[objId].TryGetComponent<HexUnit>(out var myUnit))
+        while (!NetworkManager.Singleton.SpawnManager.SpawnedObjects.ContainsKey(objId))
         {
-            Debug.LogError("Unit is null");
+            Debug.Log(NetworkManager.Singleton.SpawnManager.SpawnedObjects.Count);
+            yield return new WaitForSeconds(0.01f);
         }
-        corresPlayer.myUnits.Add(myUnit);
+        if (!NetworkManager.Singleton.SpawnManager.SpawnedObjects[objId].TryGetComponent<Feature>(out var target))
+        {
+            Debug.LogError("Base is null");
+        }
+        HexCoordinates coordinates = new(x, z);
+        HexGrid.Instance.AddFeature(
+            target, HexGrid.Instance.GetCell(coordinates), target.orientation
+        );
     }
 }

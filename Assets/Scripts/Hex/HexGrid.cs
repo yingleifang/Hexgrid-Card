@@ -124,10 +124,23 @@ public class HexGrid : MonoBehaviour
 			spawnPoints.Add(spawnPointFeature);
         }
 		feature.Location = location;
-		feature.Orientation = orientation;
-	}
+        feature.Orientation = orientation;
+        if (GameManagerClient.Instance && NetworkManager.Singleton.IsHost)
+        {
+            SyncSpawningToClient(feature, location);
+        }
+    }
 
-	public HexUnit AddUnit(HexCell location, float orientation, HexUnit unitPrefab)
+    private static void SyncSpawningToClient(Feature feature, HexCell location)
+    {
+        NetworkObject featureNetworkObj = feature.GetComponent<NetworkObject>();
+        featureNetworkObj.Spawn();
+        ulong objId = feature.GetComponent<NetworkObject>().NetworkObjectId;
+        Debug.Log(objId);
+        GameManagerClient.Instance.AddFeatureToMapClientRpc(location.Coordinates.X, location.Coordinates.Z, objId, GameManagerClient.Instance.clientRpcParams);
+    }
+
+    public HexUnit AddUnit(HexCell location, float orientation, HexUnit unitPrefab)
     {
 		HexUnit unit = Instantiate(unitPrefab);
 		unit.Location = location;
@@ -446,12 +459,13 @@ public class HexGrid : MonoBehaviour
 					int basePlayer = reader.ReadInt32();
 					if (basePlayer == GameManagerClient.Instance.corresPlayer.playerID)
 					{
-                        GameManagerServer.Instance.player1.myBases.Add(SpawnFeatureOnNetwork(player1BasePrefab, reader) as Base);
+                        GameManagerServer.Instance.player1.myBases.Add(Feature.Load(reader, this, player1BasePrefab) as Base);
 					}
 					else
 					{
-						Feature spawnedFeature = SpawnFeatureOnNetwork(player2BasePrefab, reader);
-                        GameManagerClient.Instance.AddToFeatureToClient(spawnedFeature);
+						Feature spawnedFeature = Feature.Load(reader, this, player2BasePrefab);
+                        GameManagerServer.Instance.player2.myBases.Add(spawnedFeature as Base);
+                        GameManagerClient.Instance.AddFeatureToClientPlayer(spawnedFeature);
 					}
                 }
                 int spawnPointCount = reader.ReadInt32();
@@ -460,25 +474,18 @@ public class HexGrid : MonoBehaviour
 					int spawnPointPlayer = reader.ReadInt32();
                     if (spawnPointPlayer == GameManagerClient.Instance.corresPlayer.playerID)
                     {
-                        GameManagerServer.Instance.player1.myspawnPoints.Add(SpawnFeatureOnNetwork(player1SpawnPointPrefab, reader) as SpawnPoint);
+                        GameManagerServer.Instance.player1.myspawnPoints.Add(Feature.Load(reader, this, player1SpawnPointPrefab) as SpawnPoint);
                     }
                     else
 					{
-                        Feature spawnedFeature = SpawnFeatureOnNetwork(player2SpawnPointPrefab, reader);
-                        GameManagerClient.Instance.AddToFeatureToClient(spawnedFeature);
+                        Feature spawnedFeature = Feature.Load(reader, this, player2SpawnPointPrefab);
+                        GameManagerServer.Instance.player2.myspawnPoints.Add(spawnedFeature as SpawnPoint);
+                        GameManagerClient.Instance.AddFeatureToClientPlayer(spawnedFeature);
                     }
                 }
 			}
             catch (Exception e) { Debug.LogException(e); }
         }
-    }
-
-	public Feature SpawnFeatureOnNetwork(Feature prefabToSpawn, BinaryReader reader)
-	{
-        Feature spawnedFeature = Feature.Load(reader, this, prefabToSpawn);
-        NetworkObject featureNetworkObj = spawnedFeature.GetComponent<NetworkObject>();
-        featureNetworkObj.Spawn();
-		return spawnedFeature;
     }
 
     public void LoadFeatureLocal(BinaryReader reader, int header)

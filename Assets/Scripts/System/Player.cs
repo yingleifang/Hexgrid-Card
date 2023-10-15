@@ -70,7 +70,6 @@ public class Player : NetworkBehaviour
     }
     public virtual void TakeAction()
     {
-        Debug.Log("Taking actions");
         if (!EventSystem.current.IsPointerOverGameObject())
         {
             if (Input.GetMouseButtonDown(0))
@@ -110,6 +109,7 @@ public class Player : NetworkBehaviour
         UpdateCurrentCell(cell);
         if (CurrentCell)
         {
+            Debug.Log($"Do selection: {CurrentCell.terrainFeature.GetType()}");
             if (selectedFeature)
             {
                 selectedFeature.RaiseFeatureDeSelectedEvent();
