@@ -172,7 +172,7 @@ public class HexMapEditor : MonoBehaviour
 		if (cell && !cell.unitFeature)
 		{
 			Feature feature = Instantiate(unitFeature);
-			HexGrid.Instance.AddFeature(
+			HexGrid.Instance.AddFeatureBeforeGame(
                 feature, cell, Random.Range(0f, 360f)
 			);
 		}
@@ -182,7 +182,7 @@ public class HexMapEditor : MonoBehaviour
 		HexCell cell = GetCellUnderCursor();
 		if (cell && !cell.terrainFeature)
 		{
-			HexGrid.Instance.AddFeature(
+			HexGrid.Instance.AddFeatureBeforeGame(
 				Instantiate(terrainFeature), cell, Random.Range(0f, 360f)
 			);
 		}

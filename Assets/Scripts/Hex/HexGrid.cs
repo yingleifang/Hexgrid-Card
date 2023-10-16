@@ -110,7 +110,7 @@ public class HexGrid : MonoBehaviour
 		cellShaderData = gameObject.AddComponent<HexCellShaderData>();
 		CreateMap(CellCountX, CellCountZ);
 	}
-	public void AddFeature (Feature feature, HexCell location, float orientation)
+	public void AddFeatureBeforeGame(Feature feature, HexCell location, float orientation)
 	{
 		if (feature is HexUnit unitFeature)
         {
@@ -125,7 +125,7 @@ public class HexGrid : MonoBehaviour
         }
 		feature.Location = location;
         feature.Orientation = orientation;
-        if (GameManagerClient.Instance && NetworkManager.Singleton.IsHost)
+        if (GameManagerClient.Instance)
         {
             SyncSpawningToClient(feature, location);
         }
@@ -136,21 +136,8 @@ public class HexGrid : MonoBehaviour
         NetworkObject featureNetworkObj = feature.GetComponent<NetworkObject>();
         featureNetworkObj.Spawn();
         ulong objId = feature.GetComponent<NetworkObject>().NetworkObjectId;
-        Debug.Log(objId);
         GameManagerClient.Instance.AddFeatureToMapClientRpc(location.Coordinates.X, location.Coordinates.Z, objId, GameManagerClient.Instance.clientRpcParams);
     }
-
-    public HexUnit AddUnit(HexCell location, float orientation, HexUnit unitPrefab)
-    {
-		HexUnit unit = Instantiate(unitPrefab);
-		unit.Location = location;
-		unit.Orientation = orientation;
-		location.unitFeature = unit;
-		units.Add(unit);
-		GameManagerServer.Instance.currentPlayer.myUnits.Add(unit);
-		unit.myPlayer = GameManagerServer.Instance.currentPlayer;
-		return unit;
-	}
 
 	/// <summary>
 	/// Remove a unit from the map.
@@ -595,10 +582,7 @@ public class HexGrid : MonoBehaviour
 		currentPathFrom = fromCell;
 		currentPathTo = toCell;
 		CurrentPathExists = Search(fromCell, toCell, unit, movementRange);
-		if (GameManagerServer.Instance.currentPlayer == GameManagerClient.Instance.corresPlayer)
-		{
-			ShowPath();
-		}
+		ShowPath();
 	}
 
 	bool Search (HexCell fromCell, HexCell toCell, HexUnit unit, int movementRange)

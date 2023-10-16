@@ -109,7 +109,6 @@ public class Player : NetworkBehaviour
         UpdateCurrentCell(cell);
         if (CurrentCell)
         {
-            Debug.Log($"Do selection: {CurrentCell.terrainFeature.GetType()}");
             if (selectedFeature)
             {
                 selectedFeature.RaiseFeatureDeSelectedEvent();
@@ -155,7 +154,7 @@ public class Player : NetworkBehaviour
     void ConsumeMana(int cost)
     {
         curMana -= cost;
-        manaSystemUI.UpdateManaText(GameManagerServer.Instance.currentPlayer.curMana);
+        manaSystemUI.UpdateManaText(GameManagerClient.Instance.corresPlayer.curMana);
     }
     protected HexCell FindNearestEnemyCell(HexCoordinates curUnitCoord)
     {

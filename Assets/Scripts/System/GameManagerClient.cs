@@ -231,7 +231,7 @@ public class GameManagerClient : NetworkBehaviour
             Debug.LogError("Base is null");
         }
         HexCoordinates coordinates = new(x, z);
-        HexGrid.Instance.AddFeature(
+        HexGrid.Instance.AddFeatureBeforeGame(
             target, HexGrid.Instance.GetCell(coordinates), target.orientation
         );
     }

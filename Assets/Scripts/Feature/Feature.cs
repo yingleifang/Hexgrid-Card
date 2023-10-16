@@ -62,7 +62,7 @@ public class Feature : NetworkBehaviour
 		HexCoordinates coordinates = HexCoordinates.Load(reader);
 		Feature spawnedFeature = Instantiate(feature);
         float orientation = reader.ReadSingle();
-		grid.AddFeature(
+		grid.AddFeatureBeforeGame(
             spawnedFeature, grid.GetCell(coordinates), orientation
 		);
 		return spawnedFeature;

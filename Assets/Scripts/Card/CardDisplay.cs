@@ -94,23 +94,24 @@ public class CardDisplay : MonoBehaviour
             }
             return;
         }
-            var result = UseCardChecks?.Invoke(card.cost);
-                if (result.Value.Item1) //Card can be Used
-                {
-                if (!card.CardSpecificChecks(result.Value.Item2))
-                {
-                    return;
-                }
-                    CardUsed = true;
-                    OnCardUsed?.Invoke(card.cost);
-                    StartCoroutine(StartDissolving());
-                    StartCoroutine(StartFading());
-                    card.UseEffect(result.Value.Item2);
-                }
-                else
-                {
-                    Debug.Log("Card cannot be used");
-                }
+        var result = UseCardChecks?.Invoke(card.cost);
+        if (result.Value.Item1) //Card can be Used
+        {
+            if (!card.CardSpecificChecks(result.Value.Item2))
+            {
+                Debug.Log("faild card specific checks");
+                return;
+            }
+            CardUsed = true;
+            OnCardUsed?.Invoke(card.cost);
+            StartCoroutine(StartDissolving());
+            StartCoroutine(StartFading());
+            card.UseEffect(result.Value.Item2);
+        }
+        else
+        {
+            Debug.Log("Card cannot be used");
+        }
     }
 
     IEnumerator StartDissolving()

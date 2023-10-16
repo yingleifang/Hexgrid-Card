@@ -2900,7 +2900,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1897798829548081112, guid: 1887bd6cd3c5aaa478276a5236c96d1e, type: 3}
       propertyPath: unitCardList.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1897798829548081112, guid: 1887bd6cd3c5aaa478276a5236c96d1e, type: 3}
       propertyPath: weaponCardList.Array.size

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 public class MoveAction : BaseAction
@@ -24,7 +25,8 @@ public class MoveAction : BaseAction
 		unit.location.unitFeature = unit;
 		StopAllCoroutines();
 		StartBlockingCoroutine(TravelPath());
-	}
+        RquestSyncMapLocationServerRpc(NetworkManager.Singleton.LocalClientId, unit.location.Coordinates.X, unit.location.Coordinates.Z, unit.GetComponent<NetworkObject>().NetworkObjectId);
+    }
 
 	public IEnumerator TravelPath()
 	{
@@ -95,4 +97,31 @@ public class MoveAction : BaseAction
 			HexGrid.Instance.ClearCellColor(Color.white);
 		}
 	}
+
+    [ServerRpc(RequireOwnership = false)]
+    public void RquestSyncMapLocationServerRpc(ulong clientId, int x, int z, ulong objId)
+    {
+		if (clientId == NetworkManager.Singleton.ConnectedClients[0].ClientId)
+        {
+			SyncMapLocationClientRpc(x, z, objId, GameManagerClient.Instance.clientRpcParams);
+		}
+		else
+		{
+			SyncMapLocationClientRpc(x, z, objId, GameManagerClient.Instance.HostRpcParams);
+		}
+    }
+
+	[ClientRpc]
+	public void SyncMapLocationClientRpc(int x, int z, ulong objId, ClientRpcParams clientRpcParams = default)
+	{
+		Debug.Log("SyncMapLocationClientRpc");
+		HexCoordinates coordinates = new(x, z);
+        if (!NetworkManager.Singleton.SpawnManager.SpawnedObjects[objId].TryGetComponent<HexUnit>(out var target))
+        {
+            Debug.LogError("Hexunit is null");
+        }
+		target.location.unitFeature = null;
+		target.location = HexGrid.Instance.GetCell(coordinates);
+		target.location.unitFeature = target;
+    }
 }

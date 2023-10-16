@@ -1,5 +1,4 @@
 using UnityEngine;
-
 public class UnitCard : Card
 {
     public int attack;
@@ -14,7 +13,9 @@ public class UnitCard : Card
     {
         if (player.selectedFeature is SpawnPoint temp)
         {
-            HexUnit spawnedUnit = HexGrid.Instance.AddUnit(temp.Location, temp.Orientation, unitPrefab);
+            HexUnit spawnedUnit = Instantiate(unitPrefab);
+            HexGrid.Instance.AddFeatureBeforeGame(spawnedUnit, temp.Location, temp.orientation);
+            spawnedUnit.myPlayer  = player;
             baseWeapon.EquipWeapon(spawnedUnit);
             spawnedUnit.weaponInstance = baseWeapon.weaponPrefab;
             spawnedUnit.unitType = cardType;
@@ -31,7 +32,7 @@ public class UnitCard : Card
         {
             return false;
         }
-        if (player.selectedFeature.myPlayer != GameManagerServer.Instance.currentPlayer)
+        if (player.selectedFeature.myPlayer == GameManagerClient.Instance.corresPlayer)
         {
             return false;
         }
