@@ -4,11 +4,28 @@ using UnityEngine;
 
 public class CardDatabase : MonoBehaviour
 {
+    public static CardDatabase Instance { get; private set; }
 
-    [SerializeField] List<UnitCard> unitCardList = new();
-    [SerializeField] List<WeaponCard> weaponCardList = new();
-    [SerializeField] List<SpecialEffectCard> specialEffectCardList = new();
-
+    public List<UnitCard> unitCardList = new();
+    public List<WeaponCard> weaponCardList = new();
+    public List<SpecialEffectCard> specialEffectCardList = new();
+    private void Awake()
+    {
+        if (Instance != null)
+        {
+            Debug.LogError("There's more than one CardDatabase!");
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
+    private void Start()
+    {
+        for (int i = 0; i < unitCardList.Count; i++)
+        {
+            unitCardList[i].id = i;
+        }
+    }
     public Card DrawRandomCard()
     {
         int cardType = Random.Range(0, 3);

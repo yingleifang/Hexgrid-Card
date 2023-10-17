@@ -65,7 +65,7 @@ public class Player : NetworkBehaviour
         }
         curMana += manaRegen;
         curMana = Math.Min(curMana, maxMana);
-        manaSystemUI.UpdateManaText(GameManagerServer.Instance.currentPlayer.curMana);
+        manaSystemUI.UpdateManaText(GameManagerClient.Instance.corresPlayer.curMana);
         cardArea.FillSlots();
     }
     public virtual void TakeAction()
@@ -161,7 +161,7 @@ public class Player : NetworkBehaviour
         List<HexUnit> enemyUnits;
         List<Base> enemyBases;
         HexCell res = null;
-        if (GameManagerServer.Instance.currentPlayer == GameManagerServer.Instance.player1)
+        if (SinglePlayer.Instance.currentPlayer == GameManagerServer.Instance.player1)
         {
             enemyUnits = GameManagerServer.Instance.player2.myUnits;
             enemyBases = GameManagerServer.Instance.player2.myBases;

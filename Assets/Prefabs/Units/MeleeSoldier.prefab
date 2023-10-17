@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 1487080699034269242}
   - component: {fileID: 5407466089488337565}
   - component: {fileID: 414434379242669415}
-  - component: {fileID: 8464157726281718145}
+  - component: {fileID: 5585228705813792134}
   m_Layer: 0
   m_Name: MeleeSoldier
   m_TagString: Untagged
@@ -56,6 +56,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 434bba114c5e84a0f8fb19ef55b2766a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerID: 1
   orientation: 0
   location: {fileID: 0}
   featureSelectedVisuals: {fileID: 0}
@@ -221,7 +222,7 @@ MonoBehaviour:
     TriggerNameHash: 20298039
     TransitionIndex: 3
   m_Animator: {fileID: 5407466089488337565}
---- !u!114 &8464157726281718145
+--- !u!114 &5585228705813792134
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -230,7 +231,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1716964107277084}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Script: {fileID: 11500000, guid: 2637f510a4b7e7d468ab4cc9ac2625d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   SyncPositionX: 1

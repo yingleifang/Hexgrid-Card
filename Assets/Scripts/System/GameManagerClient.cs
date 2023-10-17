@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.IO;
-using System.Security.Cryptography;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -24,7 +23,7 @@ public class GameManagerClient : NetworkBehaviour
 
     public ClientRpcParams clientRpcParams;
 
-    public ClientRpcParams HostRpcParams;
+    public ClientRpcParams hostRpcParams;
 
     public Vector3 curAttackingPosition;
     private void Awake()
@@ -58,14 +57,6 @@ public class GameManagerClient : NetworkBehaviour
             //Debug.Log("Not my turn");
         }
     }
-
-    // Start is called before the first frame update
-    //void Start()
-    //{
-    //    Shader.EnableKeyword("_HEX_MAP_EDIT_MODE");
-    //    TurnManager.Instance.OnTurnChanged += TurnTransition;
-    //    TurnManager.Instance.OnTurnChanged += GameManager_OnTurnChanged;
-    //}
     public void StartGameAllClients()
     {
         StartGameClientRpc();
@@ -76,12 +67,6 @@ public class GameManagerClient : NetworkBehaviour
     {
         StartCoroutine(StartGame());
     }
-
-    //[ServerRpc(RequireOwnership = false)]
-    //public void PlayerInitializedServerRpc()
-    //{
-    //    GameManagerServer.Instance.LoadFeature();
-    //}
     IEnumerator StartGame()
     {
         while (corresPlayer == null)
@@ -98,7 +83,7 @@ public class GameManagerClient : NetworkBehaviour
                     TargetClientIds = new ulong[] { NetworkManager.Singleton.ConnectedClients[1].ClientId }
                 }
             };
-            HostRpcParams = new ClientRpcParams
+            hostRpcParams = new ClientRpcParams
             {
                 Send = new ClientRpcSendParams
                 {
@@ -122,7 +107,7 @@ public class GameManagerClient : NetworkBehaviour
         }
         else
         {
-            StartTurnClientRpc(HostRpcParams);
+            StartTurnClientRpc(hostRpcParams);
         }
     }
 
@@ -207,19 +192,16 @@ public class GameManagerClient : NetworkBehaviour
         }else if (myFeature is SpawnPoint mySpawnPoint)
         {
             corresPlayer.myspawnPoints.Add(mySpawnPoint);
-        }else if (myFeature is HexUnit myUnit)
-        {
-            corresPlayer.myUnits.Add(myUnit);
         }
     }
 
     [ClientRpc]
     public void AddFeatureToMapClientRpc(int x, int z, ulong objId, ClientRpcParams clientRpcParams = default)
     {
-        StartCoroutine(TryAddFeature(x, z, objId, clientRpcParams));
+        StartCoroutine(TryAddFeature(x, z, objId));
     }
 
-    public IEnumerator TryAddFeature(int x, int z, ulong objId, ClientRpcParams clientRpcParams = default)
+    public IEnumerator TryAddFeature(int x, int z, ulong objId)
     {
         while (!NetworkManager.Singleton.SpawnManager.SpawnedObjects.ContainsKey(objId))
         {
@@ -235,4 +217,47 @@ public class GameManagerClient : NetworkBehaviour
             target, HexGrid.Instance.GetCell(coordinates), target.orientation
         );
     }
+
+    [ClientRpc]
+    public void SyncUnitInfoClientRpc(ulong objId, int x, int z, int cardId, ClientRpcParams clientRpcParams = default)
+    {
+        StartCoroutine(TryAdddUnit(objId, x, z, cardId));
+    }
+    public IEnumerator TryAdddUnit(ulong objId, int x, int z, int cardId)
+    {
+        while (!NetworkManager.Singleton.SpawnManager.SpawnedObjects.ContainsKey(objId))
+        {
+            Debug.Log(NetworkManager.Singleton.SpawnManager.SpawnedObjects.Count);
+            yield return new WaitForSeconds(0.01f);
+        }
+        if (!NetworkManager.Singleton.SpawnManager.SpawnedObjects[objId].TryGetComponent<HexUnit>(out var target))
+        {
+            Debug.LogError("Unit is null");
+        }
+        HexCell location = HexGrid.Instance.GetCell(new HexCoordinates(x, z));
+        Debug.Log(corresPlayer);
+        HexGrid.Instance.SetUnitAttributes(corresPlayer, CardDatabase.Instance.unitCardList[cardId], location, target);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void RequestUnitInstantiationServerRpc(int x, int z, int cardId, ServerRpcParams serverRpcParams = default)
+    {
+        UnitCard card = CardDatabase.Instance.unitCardList[cardId];
+        HexUnit unit = Instantiate(card.unitPrefab);
+        NetworkObject unitNetworkObject = unit.GetComponent<NetworkObject>();
+        unitNetworkObject.Spawn();
+        HexCell location = HexGrid.Instance.GetCell(new HexCoordinates(x, z));
+        Player player = serverRpcParams.Receive.SenderClientId == NetworkManager.Singleton.ConnectedClients[0].ClientId ? GameManagerServer.Instance.player1 : GameManagerServer.Instance.player2;
+        HexGrid.Instance.SetUnitAttributes(player, card, location, unit);
+        if (player == GameManagerServer.Instance.player1)
+        {
+            SyncUnitInfoClientRpc(unitNetworkObject.NetworkObjectId, x, z, cardId, hostRpcParams);
+        }
+        else
+        {
+            unitNetworkObject.ChangeOwnership(serverRpcParams.Receive.SenderClientId);
+            SyncUnitInfoClientRpc(unitNetworkObject.NetworkObjectId, x, z, cardId, clientRpcParams);
+        }   
+    }
+
 }

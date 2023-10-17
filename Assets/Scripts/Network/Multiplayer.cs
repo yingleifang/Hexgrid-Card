@@ -21,7 +21,7 @@ public class Multiplayer : MonoBehaviour
     {
         if (Instance != null)
         {
-            Debug.LogError("There's more than one TurnSystem!");
+            Debug.LogError("There's more than one Multiplayer!");
             Destroy(gameObject);
             return;
         }

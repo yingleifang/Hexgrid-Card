@@ -25,7 +25,7 @@ public class MoveAction : BaseAction
 		unit.location.unitFeature = unit;
 		StopAllCoroutines();
 		StartBlockingCoroutine(TravelPath());
-        RquestSyncMapLocationServerRpc(NetworkManager.Singleton.LocalClientId, unit.location.Coordinates.X, unit.location.Coordinates.Z, unit.GetComponent<NetworkObject>().NetworkObjectId);
+        RequestSyncMapLocationServerRpc(NetworkManager.Singleton.LocalClientId, unit.location.Coordinates.X, unit.location.Coordinates.Z, unit.GetComponent<NetworkObject>().NetworkObjectId);
     }
 
 	public IEnumerator TravelPath()
@@ -99,7 +99,7 @@ public class MoveAction : BaseAction
 	}
 
     [ServerRpc(RequireOwnership = false)]
-    public void RquestSyncMapLocationServerRpc(ulong clientId, int x, int z, ulong objId)
+    public void RequestSyncMapLocationServerRpc(ulong clientId, int x, int z, ulong objId)
     {
 		if (clientId == NetworkManager.Singleton.ConnectedClients[0].ClientId)
         {
@@ -107,7 +107,7 @@ public class MoveAction : BaseAction
 		}
 		else
 		{
-			SyncMapLocationClientRpc(x, z, objId, GameManagerClient.Instance.HostRpcParams);
+			SyncMapLocationClientRpc(x, z, objId, GameManagerClient.Instance.hostRpcParams);
 		}
     }
 
@@ -120,6 +120,7 @@ public class MoveAction : BaseAction
         {
             Debug.LogError("Hexunit is null");
         }
+		Debug.Log(target.location);
 		target.location.unitFeature = null;
 		target.location = HexGrid.Instance.GetCell(coordinates);
 		target.location.unitFeature = target;

@@ -22,7 +22,7 @@ public class GameManagerServer : MonoBehaviour
 
 	public Player player2;
 
-	public Player currentPlayer;
+	//public Player currentPlayer;
 
 	public Vector3 curAttackingPosition;
 
@@ -44,19 +44,19 @@ public class GameManagerServer : MonoBehaviour
 	{
 		localGameManagerClient = clientGameManager;
         player1 = NetworkManager.Singleton.ConnectedClients[NetworkManager.Singleton.LocalClientId].PlayerObject.GetComponent<Player>();
-        currentPlayer = player1;
+        //currentPlayer = player1;
     }
-	private void GameManager_OnTurnChanged(object sender, EventArgs e)
-	{
-		if (currentPlayer == player1)
-        {
-			currentPlayer = player2;
-        }
-        else
-        {
-			currentPlayer = player1;
-		}
-	}
+	//private void GameManager_OnTurnChanged(object sender, EventArgs e)
+	//{
+	//	if (currentPlayer == player1)
+ //       {
+	//		currentPlayer = player2;
+ //       }
+ //       else
+ //       {
+	//		currentPlayer = player1;
+	//	}
+	//}
 	private void Update()
 	{
 		if (!gameStarted) 

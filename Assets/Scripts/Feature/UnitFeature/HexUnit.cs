@@ -6,6 +6,8 @@ using System;
 using UnityEngine.UIElements;
 using static UnityEngine.GraphicsBuffer;
 using UnityEditor.Rendering;
+using Unity.Multiplayer.Samples.Utilities.ClientAuthority;
+using Unity.Netcode;
 
 /// <summary>
 /// Component representing a unit that occupies a cell of the hex map.
@@ -50,9 +52,9 @@ public class HexUnit : UnitFeature
 		base.Awake();
 		moveAction = GetComponent<MoveAction>();
 		attackAction = GetComponent<AttackAction>();
-	}
+    }
 
-	public float getHitDelay()
+    public float getHitDelay()
     {
 		return weaponCard.attackActionDelay;
     }

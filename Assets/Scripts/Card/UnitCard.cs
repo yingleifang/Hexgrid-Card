@@ -6,24 +6,11 @@ public class UnitCard : Card
     public int health;
     public int Speed;
     public WeaponCard baseWeapon;
-    [SerializeField]
-    protected HexUnit unitPrefab;
+    public HexUnit unitPrefab;
 
     public override void UseEffect(Player player)
     {
-        if (player.selectedFeature is SpawnPoint temp)
-        {
-            HexUnit spawnedUnit = Instantiate(unitPrefab);
-            HexGrid.Instance.AddFeatureBeforeGame(spawnedUnit, temp.Location, temp.orientation);
-            spawnedUnit.myPlayer  = player;
-            baseWeapon.EquipWeapon(spawnedUnit);
-            spawnedUnit.weaponInstance = baseWeapon.weaponPrefab;
-            spawnedUnit.unitType = cardType;
-        }
-        else
-        {
-            Debug.LogError("Trying to spawn unit outside of spawnpoint");
-        }
+        HexGrid.Instance.AddUnit(player, id, this);
     }
 
     public override bool CardSpecificChecks(Player player)

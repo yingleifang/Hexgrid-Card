@@ -4,6 +4,8 @@ using System.IO;
 using System.Collections.Generic;
 using System;
 using Unity.Netcode;
+using static UnityEngine.UI.CanvasScaler;
+using static Card;
 
 /// <summary>
 /// Component that represents an entire hexagon map.
@@ -112,10 +114,7 @@ public class HexGrid : MonoBehaviour
 	}
 	public void AddFeatureBeforeGame(Feature feature, HexCell location, float orientation)
 	{
-		if (feature is HexUnit unitFeature)
-        {
-			units.Add(unitFeature);
-		}else if (feature is Base baseFeature)
+		if (feature is Base baseFeature)
         {
 			Bases.Add(baseFeature);
         }
@@ -125,13 +124,13 @@ public class HexGrid : MonoBehaviour
         }
 		feature.Location = location;
         feature.Orientation = orientation;
-        if (GameManagerClient.Instance)
+        if (GameManagerClient.Instance && NetworkManager.Singleton.IsHost)
         {
             SyncSpawningToClient(feature, location);
         }
     }
 
-    private static void SyncSpawningToClient(Feature feature, HexCell location)
+    private static void SyncSpawningToClient(Feature feature, HexCell location) 
     {
         NetworkObject featureNetworkObj = feature.GetComponent<NetworkObject>();
         featureNetworkObj.Spawn();
@@ -139,11 +138,38 @@ public class HexGrid : MonoBehaviour
         GameManagerClient.Instance.AddFeatureToMapClientRpc(location.Coordinates.X, location.Coordinates.Z, objId, GameManagerClient.Instance.clientRpcParams);
     }
 
-	/// <summary>
-	/// Remove a unit from the map.
-	/// </summary>
-	/// <param name="unit">The unit to remove.</param>
-	public void RemoveUnit (HexUnit unit)
+	public void AddUnit(Player player, int id, UnitCard card)
+	{
+		HexCell location = player.selectedFeature.location;
+        if (GameManagerClient.Instance)
+		{
+            GameManagerClient.Instance.RequestUnitInstantiationServerRpc(location.Coordinates.X, location.Coordinates.Z, id);
+		}
+		else
+        {
+            HexUnit unit = Instantiate(CardDatabase.Instance.unitCardList[id].unitPrefab);
+            SetUnitAttributes(player, card, location, unit);
+        }
+    }
+
+    public void SetUnitAttributes(Player player, UnitCard card, HexCell location, HexUnit unit)
+    {
+        unit.Location = location;
+        //unit.Orientation = player.selectedFeature.orientation;
+        location.unitFeature = unit;
+        units.Add(unit);
+        unit.myPlayer = GameManagerClient.Instance.corresPlayer;
+        unit.myPlayer = player;
+        card.baseWeapon.EquipWeapon(unit);
+        unit.weaponInstance = card.baseWeapon.weaponPrefab;
+        unit.unitType = card.cardType;
+    }
+
+    /// <summary>
+    /// Remove a unit from the map.
+    /// </summary>
+    /// <param name="unit">The unit to remove.</param>
+    public void RemoveUnit (HexUnit unit)
 	{
 		units.Remove(unit);
 		unit.Die();
